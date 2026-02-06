@@ -2,44 +2,47 @@ import asyncio
 import threading
 import discord
 from discord.ext import commands
-from .config import Config
-from .dbLink import init_db
-from .oauth import app
 
-# Bot Setup
-intents = discord.Intents.all()
-bot = commands.Bot(command_prefix='!', intents=intents)
+from Bot.config import Config
+from Bot.DB.dbLink import init_db
+from Bot.oauth import app
+from Bot.Commands.admin import sentra
+from Bot.Commands.verify import register_verify_command
 
-# Run Web Server in Background
 def run_flask():
     app.run(port=5000, debug=False, use_reloader=False)
 
+intents = discord.Intents.none()
+intents.guilds = True
+
+bot = commands.Bot(command_prefix=None, intents=intents)
+
+# Register commands once, at import time
+bot.tree.add_command(sentra)
+register_verify_command(bot.tree)
+
+has_started = False
+
 @bot.event
 async def on_ready():
-    print(f'✅ Logged in as {bot.user}')
-    print('✅ Database linked and Web Server active.')
+    global has_started
+    if has_started:
+        return
+    has_started = True
 
-@bot.command()
-async def verify(ctx):
-    # This URL triggers the Discord 'Authorize' screen
-    url = (f"https://discord.com/api/oauth2/authorize?client_id={Config.CLIENT_ID}"
-           f"&redirect_uri={Config.REDIRECT_URI}&response_type=code&scope=identify%20email")
-    
-    embed = discord.Embed(title="Sentra Verification", color=discord.Color.blue())
-    embed.description = f"[Click here to verify your email]({url})"
-    await ctx.author.send(embed=embed)
-    await ctx.send("Check your DMs for a verification link!")
+    print(f"✅ Logged in as {bot.user}")
+
+    init_db()
+    threading.Thread(target=run_flask, daemon=True).start()
+
+    await bot.tree.sync()
+    print("✅ Slash commands synced.")
+    print("✅ Database linked and Web Server active.")
 
 async def start_everything():
     Config.validate()
-    init_db() # Ensure tables are ready
-    
-    # Start Flask
-    threading.Thread(target=run_flask, daemon=True).start()
-    
-    # Start Bot
-    async with bot:
-        await bot.start(Config.TOKEN)
+    await bot.start(Config.TOKEN)
 
 if __name__ == "__main__":
     asyncio.run(start_everything())
+

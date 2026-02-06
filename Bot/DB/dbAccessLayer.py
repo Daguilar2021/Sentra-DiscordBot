@@ -9,7 +9,7 @@ class Team(Base):
 
     id = Column(Integer, primary_key=True)
     name = Column(String(100), nullable=False)
-    # Matching your 'chanel' spelling from the CREATE TABLE
+
     textchanel_id = Column(BigInteger, unique=True)
     voicechanel_id = Column(BigInteger, unique=True)
     full_team = Column(Boolean, default=True)
@@ -32,3 +32,19 @@ class User(Base):
     
     # The relationship link
     team = relationship("Team", back_populates="members")
+
+class GuildSettings(Base):
+    __tablename__ = "guild_settings"
+
+    # one row per server
+    guild_id = Column(BigInteger, primary_key=True, index=True)
+
+    # roles
+    mentor_role_id = Column(BigInteger, nullable=True)
+    ticket_support_role_id = Column(BigInteger, nullable=True)
+
+    # channels (store as IDs)
+    team_chat_channel_ids = Column(JSONB, nullable=True)    # list[int]
+    find_teammates_channel_id = Column(BigInteger, nullable=True)
+
+    # you can extend later:
