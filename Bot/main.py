@@ -8,6 +8,7 @@ from Bot.DB.dbLink import init_db
 from Bot.oauth import app
 from Bot.Commands.admin import sentra
 from Bot.Commands.verify import register_verify_command
+from Bot.Commands.tickets import TicketPanel, TicketActions
 
 def run_flask():
     app.run(port=5000, debug=False, use_reloader=False)
@@ -34,6 +35,10 @@ async def on_ready():
 
     init_db()
     threading.Thread(target=run_flask, daemon=True).start()
+
+    # Register persistent views
+    bot.add_view(TicketPanel())
+    bot.add_view(TicketActions())
 
     await bot.tree.sync()
     print("✅ Slash commands synced.")

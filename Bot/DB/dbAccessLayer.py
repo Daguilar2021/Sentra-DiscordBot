@@ -42,9 +42,20 @@ class GuildSettings(Base):
     # roles
     mentor_role_id = Column(BigInteger, nullable=True)
     ticket_support_role_id = Column(BigInteger, nullable=True)
+    admin_role_id = Column(BigInteger, nullable=True)
 
     # channels (store as IDs)
     team_chat_channel_ids = Column(JSONB, nullable=True)    # list[int]
     find_teammates_channel_id = Column(BigInteger, nullable=True)
+    ticket_category_id = Column(BigInteger, nullable=True)
+    ticket_panel_channel_id = Column(BigInteger, nullable=True)
 
-    # you can extend later:
+class Ticket(Base):
+    __tablename__ = "tickets"
+
+    id = Column(Integer, primary_key=True)
+    guild_id = Column(BigInteger, index=True)
+    user_id = Column(BigInteger, index=True)
+    channel_id = Column(BigInteger, unique=True)
+    status = Column(String(20), default='open') # 'open', 'closed'
+    created_at = Column(BigInteger) # Store as timestamp
