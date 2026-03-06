@@ -44,15 +44,12 @@ async def view_config(interaction: discord.Interaction):
     def fmt_channel(channel_id):
         return f"<#{channel_id}>" if channel_id else "Not set"
 
-    team_channels = s.team_chat_channel_ids or []
-    team_channels_str = ", ".join(f"<#{cid}>" for cid in team_channels) if team_channels else "None"
-
     embed = discord.Embed(title="Sentra Server Config", color=discord.Color.blurple())
     embed.add_field(name="Admin Role", value=fmt_role(s.admin_role_id), inline=False)
     embed.add_field(name="Mentor Role", value=fmt_role(s.mentor_role_id), inline=False)
     embed.add_field(name="Ticket Support Role", value=fmt_role(s.ticket_support_role_id), inline=False)
     embed.add_field(name="Ticket Category", value=f"<#{s.ticket_category_id}>" if s.ticket_category_id else "Not set", inline=False)
-    embed.add_field(name="Team Chat Channels", value=team_channels_str, inline=False)
+    embed.add_field(name="Staff Channel", value=fmt_channel(s.staff_channel_id), inline=False)
     embed.add_field(name="Find Teammates Channel", value=fmt_channel(s.find_teammates_channel_id), inline=False)
 
     await interaction.response.send_message(embed=embed, ephemeral=True)
@@ -95,15 +92,6 @@ async def set_ticket_support_role(interaction: discord.Interaction, role: discor
     update_settings(interaction.guild.id, ticket_support_role_id=role.id)
     await interaction.response.send_message(f"✅ Ticket support role set to {role.mention}", ephemeral=True)
 
-@sentra.command(name="add_team_chat_channel", description="Add a channel as an official team chat")
-async def add_team_chat_channel(interaction: discord.Interaction, channel: discord.TextChannel):
-    s = get_or_create_settings(interaction.guild.id)
-    channels = s.team_chat_channel_ids or []
-    if channel.id not in channels:
-        channels.append(channel.id)
-    update_settings(interaction.guild.id, team_chat_channel_ids=channels)
-    await interaction.response.send_message(f"✅ Added team chat channel: {channel.mention}", ephemeral=True)
-
 @sentra.command(name="set_find_teammates_channel", description="Set the channel used for find-teammates")
 async def set_find_teammates_channel(interaction: discord.Interaction, channel: discord.TextChannel):
     update_settings(interaction.guild.id, find_teammates_channel_id=channel.id)
@@ -113,6 +101,11 @@ async def set_find_teammates_channel(interaction: discord.Interaction, channel: 
 async def set_ticket_category(interaction: discord.Interaction, category: discord.CategoryChannel):
     update_settings(interaction.guild.id, ticket_category_id=category.id)
     await interaction.response.send_message(f"✅ Ticket category set to **{category.name}**", ephemeral=True)
+
+@sentra.command(name="set_staff_channel", description="Configure where ticket claim pings are sent")
+async def set_staff_channel(interaction: discord.Interaction, channel: discord.TextChannel):
+    update_settings(interaction.guild.id, staff_channel_id=channel.id)
+    await interaction.response.send_message(f"✅ Staff channel set to {channel.mention}", ephemeral=True)
 
 @sentra.command(name="setup_tickets", description="Post the ticket creation panel in the current channel")
 async def setup_tickets(interaction: discord.Interaction):

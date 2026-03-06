@@ -8,18 +8,21 @@ from Bot.DB.dbLink import init_db
 from Bot.oauth import app
 from Bot.Commands.admin import sentra
 from Bot.Commands.verify import register_verify_command
-from Bot.Commands.tickets import TicketPanel, TicketActions
+from Bot.Commands.tickets import TicketPanel, TicketActions, StaffClaimView
+from Bot.Commands.resume import resume_cmds
 
 def run_flask():
     app.run(port=5000, debug=False, use_reloader=False)
 
 intents = discord.Intents.none()
 intents.guilds = True
+intents.members = True
 
 bot = commands.Bot(command_prefix=None, intents=intents)
 
 # Register commands once, at import time
 bot.tree.add_command(sentra)
+bot.tree.add_command(resume_cmds)
 register_verify_command(bot.tree)
 
 has_started = False
@@ -39,9 +42,13 @@ async def on_ready():
     # Register persistent views
     bot.add_view(TicketPanel())
     bot.add_view(TicketActions())
+    bot.add_view(StaffClaimView())
 
-    await bot.tree.sync()
-    print("✅ Slash commands synced.")
+    try:
+        synced = await bot.tree.sync()
+        print(f"✅ Slash commands synced: {[cmd.name for cmd in synced]}")
+    except Exception as e:
+        print(f"❌ Failed to sync commands: {e}")
     print("✅ Database linked and Web Server active.")
 
 async def start_everything():

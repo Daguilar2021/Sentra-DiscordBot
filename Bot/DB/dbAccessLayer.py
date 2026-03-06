@@ -25,7 +25,7 @@ class User(Base):
     email = Column(String(255), unique=True)
     is_verified = Column(Boolean, default=False)
     role = Column(String(50), default='hacker')
-    skills = Column(JSONB, nullable=True)
+    resume_data = Column(JSONB, nullable=True)
     
     # The Foreign Key link
     team_id = Column(Integer, ForeignKey('teams.id'), nullable=True)
@@ -45,10 +45,10 @@ class GuildSettings(Base):
     admin_role_id = Column(BigInteger, nullable=True)
 
     # channels (store as IDs)
-    team_chat_channel_ids = Column(JSONB, nullable=True)    # list[int]
     find_teammates_channel_id = Column(BigInteger, nullable=True)
     ticket_category_id = Column(BigInteger, nullable=True)
     ticket_panel_channel_id = Column(BigInteger, nullable=True)
+    staff_channel_id = Column(BigInteger, nullable=True)
 
 class Ticket(Base):
     __tablename__ = "tickets"
@@ -59,3 +59,5 @@ class Ticket(Base):
     channel_id = Column(BigInteger, unique=True)
     status = Column(String(20), default='open') # 'open', 'closed'
     created_at = Column(BigInteger) # Store as timestamp
+    claimed_by = Column(BigInteger, nullable=True)
+    staff_message_id = Column(BigInteger, nullable=True)
