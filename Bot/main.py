@@ -10,6 +10,8 @@ from Bot.Commands.admin import sentra
 from Bot.Commands.verify import register_verify_command
 from Bot.Commands.tickets import TicketPanel, TicketActions, StaffClaimView
 from Bot.Commands.resume import resume_cmds
+from Bot.Commands.team import team_cmds, RequestToJoinView, ApproveJoinView
+from Bot.Commands.mod_listener import setup_mod_listener
 
 def run_flask():
     app.run(port=5000, debug=False, use_reloader=False)
@@ -17,12 +19,15 @@ def run_flask():
 intents = discord.Intents.none()
 intents.guilds = True
 intents.members = True
+intents.messages = True
+intents.message_content = True
 
 bot = commands.Bot(command_prefix=None, intents=intents)
 
 # Register commands once, at import time
 bot.tree.add_command(sentra)
 bot.tree.add_command(resume_cmds)
+bot.tree.add_command(team_cmds)
 register_verify_command(bot.tree)
 
 has_started = False
@@ -39,10 +44,18 @@ async def on_ready():
     init_db()
     threading.Thread(target=run_flask, daemon=True).start()
 
+    # Load moderation engine (heavy model load — do once at startup)
+    print("⏳ Loading moderation engine...")
+    from Bot.Moderation.engine import ModerationEngine
+    mod_engine = ModerationEngine()
+    setup_mod_listener(bot, mod_engine)
+
     # Register persistent views
     bot.add_view(TicketPanel())
     bot.add_view(TicketActions())
     bot.add_view(StaffClaimView())
+    bot.add_view(RequestToJoinView())
+    bot.add_view(ApproveJoinView())
 
     try:
         synced = await bot.tree.sync()

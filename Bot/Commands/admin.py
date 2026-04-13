@@ -1,6 +1,8 @@
 import discord
 from discord import app_commands
 from Bot.DB.settings_store import get_or_create_settings, update_settings
+from Bot.DB.dbLink import get_session
+from Bot.DB.dbAccessLayer import Infraction
 
 def is_admin_or_owner(interaction: discord.Interaction) -> bool:
     if not interaction.guild:
@@ -51,6 +53,15 @@ async def view_config(interaction: discord.Interaction):
     embed.add_field(name="Ticket Category", value=f"<#{s.ticket_category_id}>" if s.ticket_category_id else "Not set", inline=False)
     embed.add_field(name="Staff Channel", value=fmt_channel(s.staff_channel_id), inline=False)
     embed.add_field(name="Find Teammates Channel", value=fmt_channel(s.find_teammates_channel_id), inline=False)
+    embed.add_field(name="Team Category", value=f"**{interaction.guild.get_channel(s.team_category_id).name}**" if s.team_category_id and interaction.guild.get_channel(s.team_category_id) else "Not set", inline=False)
+    embed.add_field(name="Max Team Size", value=str(s.max_team_size or 4), inline=False)
+
+    # Moderation settings
+    embed.add_field(name="──── Moderation ────", value="\u200b", inline=False)
+    embed.add_field(name="Mod Channel", value=fmt_channel(s.mod_channel_id), inline=False)
+    
+    threshold_val = s.mod_toxicity_threshold if s.mod_toxicity_threshold is not None else 0.7
+    embed.add_field(name="Toxicity Threshold", value=str(threshold_val), inline=False)
 
     await interaction.response.send_message(embed=embed, ephemeral=True)
 
@@ -97,6 +108,19 @@ async def set_find_teammates_channel(interaction: discord.Interaction, channel: 
     update_settings(interaction.guild.id, find_teammates_channel_id=channel.id)
     await interaction.response.send_message(f"✅ Find-teammates channel set to {channel.mention}", ephemeral=True)
 
+@sentra.command(name="set_team_category", description="Set the category where team channels are created")
+async def set_team_category(interaction: discord.Interaction, category: discord.CategoryChannel):
+    update_settings(interaction.guild.id, team_category_id=category.id)
+    await interaction.response.send_message(f"✅ Team category set to **{category.name}**", ephemeral=True)
+
+@sentra.command(name="set_max_team_size", description="Set the max number of members per team")
+async def set_max_team_size(interaction: discord.Interaction, size: int):
+    if size < 2 or size > 10:
+        await interaction.response.send_message("❌ Team size must be between 2 and 10.", ephemeral=True)
+        return
+    update_settings(interaction.guild.id, max_team_size=size)
+    await interaction.response.send_message(f"✅ Max team size set to **{size}**", ephemeral=True)
+
 @sentra.command(name="set_ticket_category", description="Set the category where new tickets will be created")
 async def set_ticket_category(interaction: discord.Interaction, category: discord.CategoryChannel):
     update_settings(interaction.guild.id, ticket_category_id=category.id)
@@ -127,3 +151,65 @@ async def setup_tickets(interaction: discord.Interaction):
     
     update_settings(interaction.guild.id, ticket_panel_channel_id=interaction.channel.id)
     await interaction.response.send_message("✅ Ticket panel posted!", ephemeral=True)
+
+# ─── Moderation Commands ─────────────────────────────────────────────────────
+
+@sentra.command(name="set_mod_channel", description="Set the channel where moderation logs are posted (enables auto-mod)")
+async def set_mod_channel(interaction: discord.Interaction, channel: discord.TextChannel):
+    update_settings(interaction.guild.id, mod_channel_id=channel.id)
+    await interaction.response.send_message(
+        f"✅ Mod log channel set to {channel.mention}. Auto-moderation is now **enabled**.",
+        ephemeral=True,
+    )
+
+@sentra.command(name="set_toxicity_threshold", description="Set the toxicity sensitivity (0.0-1.0, lower = stricter)")
+async def set_toxicity_threshold(interaction: discord.Interaction, value: float):
+    if value < 0.0 or value > 1.0:
+        await interaction.response.send_message(
+            "❌ Threshold must be between 0.0 and 1.0.", ephemeral=True
+        )
+        return
+    update_settings(interaction.guild.id, mod_toxicity_threshold=value)
+    await interaction.response.send_message(
+        f"✅ Toxicity threshold set to **{value}**.", ephemeral=True
+    )
+
+@sentra.command(name="view_infractions", description="View infraction history for a user")
+async def view_infractions(interaction: discord.Interaction, user: discord.User):
+    db = get_session()
+    try:
+        infractions = (
+            db.query(Infraction)
+            .filter(
+                Infraction.guild_id == interaction.guild.id,
+                Infraction.user_id == user.id,
+            )
+            .order_by(Infraction.created_at.desc())
+            .limit(10)
+            .all()
+        )
+    finally:
+        db.close()
+
+    if not infractions:
+        await interaction.response.send_message(
+            f"✅ No infractions found for {user.mention}.", ephemeral=True
+        )
+        return
+
+    embed = discord.Embed(
+        title=f"Infractions for {user.display_name}",
+        color=discord.Color.orange(),
+    )
+
+    for inf in infractions:
+        timestamp = f"<t:{inf.created_at}:R>" if inf.created_at else "Unknown"
+        keywords_str = ", ".join(inf.keywords) if inf.keywords else "None"
+        embed.add_field(
+            name=f"{inf.action_taken.upper()} — Score: {inf.toxicity_score:.2f} — {timestamp}",
+            value=f"```{inf.message_content[:100]}```Keywords: {keywords_str}",
+            inline=False,
+        )
+
+    embed.set_footer(text=f"Showing last {len(infractions)} infractions")
+    await interaction.response.send_message(embed=embed, ephemeral=True)
