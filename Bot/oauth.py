@@ -9,7 +9,13 @@ app = Flask(__name__)
 @app.route('/callback')
 def callback():
     code = request.args.get('code')
+    guild_id_str = request.args.get('state')
     if not code: return "Error: No code", 400
+    if not guild_id_str: return "Error: No state (guild_id) provided", 400
+    try:
+        guild_id = int(guild_id_str)
+    except ValueError:
+        return "Error: Invalid state", 400
 
     # Token
     data = {
@@ -33,14 +39,14 @@ def callback():
     #Save to Postgres
     session = get_session()
     try:
-        user = session.query(User).filter_by(discord_id=d_id).first()
+        user = session.query(User).filter_by(discord_id=d_id, guild_id=guild_id).first()
         if not user:
-            user = User(discord_id=d_id, email=d_email, is_verified=True)
+            user = User(discord_id=d_id, guild_id=guild_id, email=d_email, is_verified=True)
             session.add(user)
         else:
             user.email = d_email
             user.is_verified = True
         session.commit()
-        return "<h1>Success!</h1><p>You are now verified in the Sentra database.</p>"
+        return redirect("http://localhost:4200/auth/success")
     finally:
         session.close()

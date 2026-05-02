@@ -160,7 +160,6 @@ class ModerationEngine:
         with torch.no_grad():
             outputs = self.model(**inputs)
             logits = outputs.logits
-            # unitary/toxic-bert uses independent sigmoids for each class (toxic, severe_toxic, etc.)
             probs = torch.sigmoid(logits)
 
         # Class 0 is 'toxic'

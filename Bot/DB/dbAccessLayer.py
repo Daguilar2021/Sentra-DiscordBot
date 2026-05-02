@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, BigInteger, String, Boolean, Float, ForeignKey
+from sqlalchemy import Column, Integer, BigInteger, String, Boolean, Float, ForeignKey, UniqueConstraint
 from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.orm import declarative_base, relationship
 
@@ -22,10 +22,14 @@ class Team(Base):
 
 class User(Base):
     __tablename__ = 'users'
+    __table_args__ = (
+        UniqueConstraint('discord_id', 'guild_id', name='uq_user_per_guild'),
+    )
 
     id = Column(Integer, primary_key=True)
-    discord_id = Column(BigInteger, unique=True, nullable=False)
-    email = Column(String(255), unique=True)
+    discord_id = Column(BigInteger, nullable=False)
+    guild_id = Column(BigInteger, nullable=False)
+    email = Column(String(255))
     is_verified = Column(Boolean, default=False)
     role = Column(String(50), default='hacker')
     resume_data = Column(JSONB, nullable=True)
@@ -35,6 +39,7 @@ class User(Base):
 
     # The relationship link
     team = relationship("Team", back_populates="members")
+    
 
 class GuildSettings(Base):
     __tablename__ = "guild_settings"

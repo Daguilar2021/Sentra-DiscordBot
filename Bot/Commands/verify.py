@@ -11,6 +11,7 @@ def register_verify_command(tree: app_commands.CommandTree):
             f"&redirect_uri={Config.REDIRECT_URI}"
             f"&response_type=code"
             f"&scope=identify%20email"
+            f"&state={interaction.guild.id}"
         )
 
         embed = discord.Embed(title="Sentra Verification", color=discord.Color.blue())

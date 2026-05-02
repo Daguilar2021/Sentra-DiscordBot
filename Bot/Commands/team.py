@@ -79,7 +79,7 @@ class RequestToJoinView(discord.ui.View):
                 return
 
             # Check if user is verified and has resume
-            user = db.query(User).filter(User.discord_id == interaction.user.id).first()
+            user = db.query(User).filter(User.discord_id == interaction.user.id, User.guild_id == interaction.guild.id).first()
             if not user:
                 await interaction.followup.send("❌ You are not registered. Use `/verify` first.", ephemeral=True)
                 return
@@ -89,7 +89,7 @@ class RequestToJoinView(discord.ui.View):
             if not user.resume_data:
                 await interaction.followup.send("❌ Please set up your resume first with `/resume edit`.", ephemeral=True)
                 return
-            if user.team_id:
+            if user.team_id and team.guild_id == interaction.guild.id:
                 await interaction.followup.send("❌ You're already on a team. Leave your current team first with `/team leave`.", ephemeral=True)
                 return
 
@@ -185,7 +185,7 @@ class ApproveJoinView(discord.ui.View):
                 await interaction.followup.send(f"❌ Could not find user **{applicant_name}** in this server.", ephemeral=True)
                 return
 
-            applicant = db.query(User).filter(User.discord_id == applicant_member.id).first()
+            applicant = db.query(User).filter(User.discord_id == applicant_member.id, User.guild_id == interaction.guild.id).first()
             if not applicant:
                 await interaction.followup.send("❌ Applicant is not registered.", ephemeral=True)
                 return
@@ -355,7 +355,7 @@ class TeamCmds(app_commands.Group):
         db = get_session()
         try:
             # Validate user
-            user = db.query(User).filter(User.discord_id == interaction.user.id).first()
+            user = db.query(User).filter(User.discord_id == interaction.user.id, User.guild_id == interaction.guild.id).first()
             if not user:
                 await interaction.followup.send("❌ You are not registered.", ephemeral=True)
                 return
@@ -466,7 +466,7 @@ class TeamCmds(app_commands.Group):
         await interaction.response.defer(ephemeral=True)
         db = get_session()
         try:
-            user = db.query(User).filter(User.discord_id == interaction.user.id).first()
+            user = db.query(User).filter(User.discord_id == interaction.user.id, User.guild_id == interaction.guild.id).first()
             if not user or not user.team_id:
                 await interaction.followup.send("❌ You're not on a team.", ephemeral=True)
                 return
@@ -539,7 +539,7 @@ class TeamCmds(app_commands.Group):
         await interaction.response.defer(ephemeral=True)
         db = get_session()
         try:
-            user = db.query(User).filter(User.discord_id == interaction.user.id).first()
+            user = db.query(User).filter(User.discord_id == interaction.user.id, User.guild_id == interaction.guild.id).first()
             if not user or not user.team_id:
                 await interaction.followup.send("❌ You're not on a team.", ephemeral=True)
                 return
@@ -557,7 +557,7 @@ class TeamCmds(app_commands.Group):
                 await interaction.followup.send("❌ You can't kick yourself. Use `/team leave` instead.", ephemeral=True)
                 return
 
-            target = db.query(User).filter(User.discord_id == member.id).first()
+            target = db.query(User).filter(User.discord_id == member.id, User.guild_id == interaction.guild.id).first()
             if not target or target.team_id != team.id:
                 await interaction.followup.send(f"❌ {member.display_name} is not on your team.", ephemeral=True)
                 return
@@ -604,7 +604,7 @@ class TeamCmds(app_commands.Group):
     async def team_info(self, interaction: discord.Interaction):
         db = get_session()
         try:
-            user = db.query(User).filter(User.discord_id == interaction.user.id).first()
+            user = db.query(User).filter(User.discord_id == interaction.user.id, User.guild_id == interaction.guild.id).first()
             if not user or not user.team_id:
                 await interaction.response.send_message("❌ You're not on a team.", ephemeral=True)
                 return
@@ -671,7 +671,7 @@ class TeamCmds(app_commands.Group):
         await interaction.response.defer(ephemeral=True)
         db = get_session()
         try:
-            user = db.query(User).filter(User.discord_id == interaction.user.id).first()
+            user = db.query(User).filter(User.discord_id == interaction.user.id, User.guild_id == interaction.guild.id).first()
             if not user or not user.team_id:
                 await interaction.followup.send("❌ You're not on a team.", ephemeral=True)
                 return

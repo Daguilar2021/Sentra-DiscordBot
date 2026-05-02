@@ -1,0 +1,151 @@
+/* ── Hero Section ─────────────────────────────────────────────── */
+
+.hero {
+  position: relative;
+  min-height: 100vh;
+  overflow: hidden;
+  background: var(--color-slate-900);
+}
+
+/* Background image — right-aligned, covers viewport */
+.hero-bg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  background-image: url('/assets/images/herobg.jpg');
+  background-size: cover;
+  background-position: right center;
+  background-repeat: no-repeat;
+  pointer-events: none;
+}
+
+/* Gradient overlay: solid on left, transparent on right */
+.hero-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to right,
+      var(--color-indigo-950) 0%,
+      rgba(15, 23, 42, 0.95) 40%,
+      transparent 100%);
+}
+
+/* ── Content Container ───────────────────────────────────────── */
+
+.hero-content {
+  position: relative;
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  min-height: 100vh;
+  padding: 4rem 2rem;
+  max-width: 56rem;
+  /* ~4xl */
+}
+
+/* ── Heading ─────────────────────────────────────────────────── */
+
+.hero-header {
+  margin-bottom: 2rem;
+}
+
+.hero-title {
+  font-size: clamp(3.5rem, 8vw, 6rem);
+  font-weight: 800;
+  line-height: 1.1;
+  margin-bottom: 1rem;
+  color: #fff;
+}
+
+.hero-tagline {
+  font-size: clamp(1.125rem, 2.5vw, 1.5rem);
+  color: var(--color-gray-300);
+  font-style: italic;
+  animation: fadeSlideUp 0.8s 0.15s ease-out both;
+}
+
+/* ── Description ─────────────────────────────────────────────── */
+
+.hero-description {
+  margin-bottom: 3rem;
+  max-width: 42rem;
+  animation: fadeSlideUp 0.8s 0.3s ease-out both;
+}
+
+.hero-description p {
+  font-size: clamp(1rem, 2vw, 1.25rem);
+  color: var(--color-gray-200);
+  line-height: 1.75;
+}
+
+/* ── Feature Grid ────────────────────────────────────────────── */
+
+.feature-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 0.5rem;
+  margin-bottom: 2rem;
+  max-width: 36rem;
+  animation: fadeSlideUp 0.8s 0.45s ease-out both;
+}
+
+
+
+/* ── Animations ──────────────────────────────────────────────── */
+
+@keyframes fadeSlideUp {
+  from {
+    opacity: 0;
+    transform: translateY(24px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ── Responsive ──────────────────────────────────────────────── */
+
+@media (min-width: 768px) {
+  .hero-content {
+    padding: 4rem 4rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .hero-content {
+    padding: 4rem 6rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .hero-bg {
+    /* Swap to the generated robot image for mobile */
+    background-image: url('/assets/images/hero-bg.png');
+    background-position: center;
+  }
+
+  .hero-overlay {
+    /* Fade from solid dark at the bottom to transparent at the top */
+    background: linear-gradient(to top, 
+      var(--color-slate-900) 10%, 
+      rgba(15, 23, 42, 0.75) 100%
+    );
+  }
+}
+
+@media (max-width: 639px) {
+  .feature-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .hero-actions {
+    flex-direction: column;
+  }
+
+  .btn {
+    width: 100%;
+  }
+}
