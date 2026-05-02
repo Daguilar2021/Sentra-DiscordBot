@@ -1,0 +1,43 @@
+<section class="hero">
+  <!-- Background image (controlled via CSS for responsive swapping) -->
+  <div class="hero-bg" aria-hidden="true"></div>
+
+
+  <!-- Gradient overlay: opaque left → transparent right -->
+  <div class="hero-overlay"></div>
+
+  <!-- Content -->
+  <div class="hero-content">
+    <!-- Logo / Heading -->
+    <header class="hero-header">
+      <h1 class="hero-title">Sentra</h1>
+      <p class="hero-tagline">run your server, we have your back</p>
+    </header>
+
+    <!-- Description -->
+    <div class="hero-description">
+      <p>
+        Sentra is an all-in-one Discord bot for event management, ticketing,
+        moderation, and team collaboration
+      </p>
+    </div>
+
+    <!-- Feature Cards -->
+    <div class="feature-grid">
+      <app-feature-card icon="🛠️" title="Configure bot" description="Configure roles, channels, and more" />
+      <app-feature-card icon="🎫" title="Ticketing System" description="Handle support requests efficiently" />
+      <app-feature-card icon="🛡️" title="Moderation" description="Keep your community safe and organized" />
+      <app-feature-card icon="👥" title="Team Collaboration" description="Work together seamlessly with your team" />
+    </div>
+
+    <!-- CTA Buttons -->
+    <div class="hero-actions">
+      <button (click)="connectDiscord()" class="btn btn-primary" id="add-to-discord">
+        Add to Discord
+      </button>
+      <button class="btn btn-ghost" id="learn-more">
+        Learn More
+      </button>
+    </div>
+  </div>
+</section>

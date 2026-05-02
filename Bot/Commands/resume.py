@@ -44,7 +44,7 @@ class ResumeModal(discord.ui.Modal, title='Edit Your Resume'):
         await interaction.response.defer(ephemeral=True)
         db = get_session()
         try:
-            user = db.query(User).filter(User.discord_id == interaction.user.id).first()
+            user = db.query(User).filter(User.discord_id == interaction.user.id, User.guild_id == interaction.guild.id).first()
             if not user:
                 await interaction.followup.send("❌ You are not registered.", ephemeral=True)
                 return
@@ -85,7 +85,7 @@ class ResumeCmds(app_commands.Group):
     async def edit_resume(self, interaction: discord.Interaction):
         db = get_session()
         try:
-            user = db.query(User).filter(User.discord_id == interaction.user.id).first()
+            user = db.query(User).filter(User.discord_id == interaction.user.id, User.guild_id == interaction.guild.id).first()
             if not user:
                 await interaction.response.send_message("❌ You are not registered in the database.", ephemeral=True)
                 return
@@ -115,7 +115,7 @@ class ResumeCmds(app_commands.Group):
         target = member or interaction.user
         db = get_session()
         try:
-            user = db.query(User).filter(User.discord_id == target.id).first()
+            user = db.query(User).filter(User.discord_id == target.id, User.guild_id == interaction.guild.id).first()
             if not user or not user.resume_data:
                 await interaction.response.send_message(f"❌ {target.mention} hasn't set up their resume yet.", ephemeral=True)
                 return

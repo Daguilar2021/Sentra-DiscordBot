@@ -14,42 +14,49 @@ def run_test():
     engine = ModerationEngine()
     print("✅ Engine loaded!\n")
 
-    # Change this text to test different phrases
-    test_text = "kill your self cunt"
-    print(f"Testing text: '{test_text}'")
-    
-    start_time = time.perf_counter()
-    result = engine.analyze(test_text)
-    processing_time = (time.perf_counter() - start_time) * 1000
-    
-    print("\n--- Model Output ---")
-    print(f"Toxic: {result['toxic']}")
-    print(f"Score: {result['score']:.4f}")
-    print(f"Keywords: {result['keywords']}")
-    print(f"Processing Time: {processing_time:.0f}ms\n")
+    texts_to_test = [
+        "kys",
+        "I like this project",
+        "I Dont like this project",
+        "you are stupid",
+        "This bot is complete garbage, you are all stupid idiots and this entire server is a terrible place full of losers. I hate it here."
+    ]
 
-    if result["toxic"]:
-        print("Saving test infraction to DB...")
-        try:
-            db = get_session()
-            infraction = Infraction(
-                guild_id=123456789,  # Dummy Guild ID
-                user_id=987654321,   # Dummy User ID
-                message_content=test_text,
-                toxicity_score=result["score"],
-                keywords=result["keywords"],
-                action_taken="bot_test",
-                created_at=int(time.time()),
-                reviewed=False,
-            )
-            db.add(infraction)
-            db.commit()
-            db.close()
-            print("✅ Infraction successfully saved to database!")
-        except Exception as e:
-            print(f"❌ Failed to save to database: {e}")
-    else:
-        print("Message was not flagged as toxic (score was under 0.5 default threshold).")
+    for test_text in texts_to_test:
+        print(f"Testing text: '{test_text}'")
+        
+        start_time = time.perf_counter()
+        result = engine.analyze(test_text)
+        processing_time = (time.perf_counter() - start_time) * 1000
+        
+        print(f"  Toxic: {result['toxic']}")
+        print(f"  Score: {result['score']:.4f}")
+        print(f"  Keywords: {result['keywords']}")
+        print(f"  Time: {processing_time:.0f}ms\n")
+
+        if result["toxic"]:
+            print("  [Action] Saving test infraction to DB...")
+            try:
+                db = get_session()
+                infraction = Infraction(
+                    guild_id=123456789,  # Dummy Guild ID
+                    user_id=987654321,   # Dummy User ID
+                    message_content=test_text,
+                    toxicity_score=result["score"],
+                    keywords=result["keywords"],
+                    action_taken="bot_test",
+                    created_at=int(time.time()),
+                    reviewed=False,
+                )
+                db.add(infraction)
+                db.commit()
+                db.close()
+                print("  ✅ Infraction successfully saved!")
+            except Exception as e:
+                print(f"  ❌ Failed to save to database: {e}")
+        else:
+            print("  [Action] Ignored (score under threshold).")
+        print("-" * 40)
 
 if __name__ == "__main__":
     run_test()
