@@ -1,9 +1,22 @@
-discord.py
-flask
-sqlalchemy
-psycopg2-binary
-requests
-python-dotenv
-transformers
-torch
-keybert
+# Core Bot & Environment
+discord.py==2.6.4
+python-dotenv==1.2.1
+requests==2.32.5
+
+# Web & Dashboard
+Flask==3.1.2
+
+
+# Database
+SQLAlchemy==2.0.46
+psycopg2-binary==2.9.11
+
+# Moderation Engine (AI/ML)
+torch==2.11.0+cpu
+transformers==4.57.6
+keybert==0.9.0
+sentence-transformers==2.7.0
+
+# UI & Logging
+rich==14.3.3
+tqdm==4.67.3

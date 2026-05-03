@@ -1,4 +1,4 @@
-from flask import Flask, request
+from flask import Flask, request, redirect
 import requests
 from .config import Config
 from .DB.dbLink import get_session
