@@ -14,11 +14,19 @@ def register_verify_command(tree: app_commands.CommandTree):
             f"&state={interaction.guild.id}"
         )
 
-        embed = discord.Embed(title="Sentra Verification", color=discord.Color.blue())
-        embed.description = f"[Click here to verify your email]({url})"
+        embed = discord.Embed(
+            title="Sentra Verification", 
+            description="Click the button below to link your Discord account securely.",
+            color=discord.Color.blue()
+        )
+
+        # Create a View with a URL Button
+        view = discord.ui.View()
+        button = discord.ui.Button(label="Verify Now", style=discord.ButtonStyle.link, url=url)
+        view.add_item(button)
 
         try:
-            await interaction.user.send(embed=embed)
+            await interaction.user.send(embed=embed, view=view)
             await interaction.response.send_message(
                 "Check your DMs for a verification link!",
                 ephemeral=True

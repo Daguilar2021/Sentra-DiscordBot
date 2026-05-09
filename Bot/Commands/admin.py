@@ -21,6 +21,48 @@ def is_admin_or_owner(interaction: discord.Interaction) -> bool:
             
     return False
 
+async def sync_staff_permissions(guild: discord.Guild, s):
+    """Helper to sync permissions for the staff channel and category."""
+    admin_role = guild.get_role(s.admin_role_id) if s.admin_role_id else None
+    support_role = guild.get_role(s.ticket_support_role_id) if s.ticket_support_role_id else None
+    
+    # 1. Update Staff Channel
+    if s.staff_channel_id:
+        channel = guild.get_channel(s.staff_channel_id)
+        if channel:
+            overwrites = {
+                guild.default_role: discord.PermissionOverwrite(view_channel=False),
+                guild.me: discord.PermissionOverwrite(view_channel=True)
+            }
+            if admin_role:
+                overwrites[admin_role] = discord.PermissionOverwrite(view_channel=True)
+            if support_role:
+                overwrites[support_role] = discord.PermissionOverwrite(view_channel=True)
+            
+            try:
+                await channel.edit(overwrites=overwrites)
+            except discord.Forbidden:
+                pass
+
+    # 2. Update Staff Category (if the channel is in one)
+    if s.staff_channel_id:
+        channel = guild.get_channel(s.staff_channel_id)
+        if channel and channel.category:
+            cat = channel.category
+            overwrites = {
+                guild.default_role: discord.PermissionOverwrite(view_channel=False),
+                guild.me: discord.PermissionOverwrite(view_channel=True)
+            }
+            if admin_role:
+                overwrites[admin_role] = discord.PermissionOverwrite(view_channel=True)
+            if support_role:
+                overwrites[support_role] = discord.PermissionOverwrite(view_channel=True)
+            
+            try:
+                await cat.edit(overwrites=overwrites)
+            except discord.Forbidden:
+                pass
+
 class SentraAdmin(app_commands.Group):
     def __init__(self):
         super().__init__(name="sentra", description="Sentra admin configuration commands")
@@ -98,10 +140,12 @@ async def set_mentor_role(interaction: discord.Interaction, role: discord.Role):
     update_settings(interaction.guild.id, mentor_role_id=role.id)
     await interaction.response.send_message(f"✅ Mentor role set to {role.mention}", ephemeral=True)
 
-@sentra.command(name="set_ticket_support_role", description="Set the role that handles tickets")
+@sentra.command(name="set_ticket_support_role", description="Set the role that handles tickets (automatically grants access to staff channel)")
 async def set_ticket_support_role(interaction: discord.Interaction, role: discord.Role):
     update_settings(interaction.guild.id, ticket_support_role_id=role.id)
-    await interaction.response.send_message(f"✅ Ticket support role set to {role.mention}", ephemeral=True)
+    s = get_or_create_settings(interaction.guild.id)
+    await sync_staff_permissions(interaction.guild, s)
+    await interaction.response.send_message(f"✅ Ticket support role set to {role.mention} and permissions synced.", ephemeral=True)
 
 @sentra.command(name="set_find_teammates_channel", description="Set the channel used for find-teammates")
 async def set_find_teammates_channel(interaction: discord.Interaction, channel: discord.TextChannel):
@@ -129,7 +173,9 @@ async def set_ticket_category(interaction: discord.Interaction, category: discor
 @sentra.command(name="set_staff_channel", description="Configure where ticket claim pings are sent")
 async def set_staff_channel(interaction: discord.Interaction, channel: discord.TextChannel):
     update_settings(interaction.guild.id, staff_channel_id=channel.id)
-    await interaction.response.send_message(f"✅ Staff channel set to {channel.mention}", ephemeral=True)
+    s = get_or_create_settings(interaction.guild.id)
+    await sync_staff_permissions(interaction.guild, s)
+    await interaction.response.send_message(f"✅ Staff channel set to {channel.mention} and permissions synced.", ephemeral=True)
 
 @sentra.command(name="setup_tickets", description="Post the ticket creation panel in the current channel")
 async def setup_tickets(interaction: discord.Interaction):
@@ -169,27 +215,42 @@ async def quick_setup(interaction: discord.Interaction):
         support_role = await guild.create_role(name="Support Team", color=discord.Color.blue(), reason="Sentra Quick Setup")
         
         # --- Categories ---
-        ticket_cat = await guild.create_category(name="🎫 Support Tickets", reason="Sentra Quick Setup")
+        # Admin-only overwrites
+        admin_overwrites = {
+            guild.default_role: discord.PermissionOverwrite(view_channel=False),
+            admin_role: discord.PermissionOverwrite(view_channel=True),
+            guild.me: discord.PermissionOverwrite(view_channel=True)
+        }
+        
+        # Staff (Admin + Support)
+        staff_cat_overwrites = admin_overwrites.copy()
+        staff_cat_overwrites[support_role] = discord.PermissionOverwrite(view_channel=True)
+
+        ticket_cat = await guild.create_category(name="🎫 Support Tickets", overwrites=admin_overwrites, reason="Sentra Quick Setup")
         team_cat = await guild.create_category(name="🚀 Hackathon Teams", reason="Sentra Quick Setup")
-        staff_cat = await guild.create_category(name="🛡️ Sentra Staff", reason="Sentra Quick Setup")
+        staff_cat = await guild.create_category(name="🛡️ Sentra Staff", overwrites=staff_cat_overwrites, reason="Sentra Quick Setup")
         
         # --- Channels ---
         find_teammates = await guild.create_text_channel(name="find-teammates", reason="Sentra Quick Setup")
         
-        # Mod & Staff Channels (Private)
-        staff_overwrites = {
-            guild.default_role: discord.PermissionOverwrite(view_channel=False),
-            admin_role: discord.PermissionOverwrite(view_channel=True),
-            support_role: discord.PermissionOverwrite(view_channel=True),
-            guild.me: discord.PermissionOverwrite(view_channel=True)
-        }
-        staff_channel = await guild.create_text_channel(name="staff-alerts", category=staff_cat, overwrites=staff_overwrites, reason="Sentra Quick Setup")
+        # Support channel for the panel
+        support_channel = await guild.create_text_channel(name="support", reason="Sentra Quick Setup")
         
-        mod_overwrites = {
-            guild.default_role: discord.PermissionOverwrite(view_channel=False),
-            admin_role: discord.PermissionOverwrite(view_channel=True),
-            guild.me: discord.PermissionOverwrite(view_channel=True)
-        }
+        # Automatically post the panel
+        from Bot.Commands.tickets import TicketPanel
+        panel_embed = discord.Embed(
+            title="Sentra Support",
+            description="Click the button below to open a private support ticket. Only the support team and administrators will have access to your ticket.",
+            color=discord.Color.blue()
+        )
+        await support_channel.send(embed=panel_embed, view=TicketPanel())
+        
+        # Staff alerts inherits from staff_cat
+        staff_channel = await guild.create_text_channel(name="staff-alerts", category=staff_cat, reason="Sentra Quick Setup")
+        
+        # Mod logs overrides staff_cat to hide it from Support role
+        mod_overwrites = admin_overwrites.copy()
+        mod_overwrites[support_role] = discord.PermissionOverwrite(view_channel=False)
         mod_channel = await guild.create_text_channel(name="mod-logs", category=staff_cat, overwrites=mod_overwrites, reason="Sentra Quick Setup")
         
         # --- Save to DB ---
@@ -202,10 +263,11 @@ async def quick_setup(interaction: discord.Interaction):
             team_category_id=team_cat.id,
             staff_channel_id=staff_channel.id,
             find_teammates_channel_id=find_teammates.id,
+            ticket_panel_channel_id=support_channel.id,
             mod_channel_id=mod_channel.id
         )
         
-        await interaction.followup.send("✅ **Quick Setup Complete!** All essential roles, categories, and channels have been created and configured automatically.\n*Tip: Run `/sentra setup_tickets` to place your ticket panel!*")
+        await interaction.followup.send("✅ **Quick Setup Complete!** All essential roles, categories, and channels have been created. The ticket panel has been posted in " + support_channel.mention + "!")
         
     except discord.Forbidden:
         await interaction.followup.send("❌ I don't have the required permissions (`Manage Channels` & `Manage Roles`) to run quick setup.")

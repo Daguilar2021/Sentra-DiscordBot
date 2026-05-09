@@ -47,6 +47,17 @@ def callback():
             user.email = d_email
             user.is_verified = True
         session.commit()
-        return redirect("http://localhost:4200/auth/success")
+        html_response = """
+        <html>
+            <body style="background-color: #1e1e2e; color: #cdd6f4; font-family: sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0;">
+                <div style="text-align: center; background-color: #313244; padding: 40px; border-radius: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+                    <h1 style="color: #a6e3a1;">Verification Successful!</h1>
+                    <p style="font-size: 18px;">You have successfully linked your Discord account.</p>
+                    <p style="color: #9399b2;">You can now close this tab and return to Discord.</p>
+                </div>
+            </body>
+        </html>
+        """
+        return html_response
     finally:
         session.close()
