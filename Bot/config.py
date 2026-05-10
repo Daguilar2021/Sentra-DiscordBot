@@ -1,3 +1,6 @@
+# ./Sentra-DiscordBot/Bot/config.py
+# This file handles the configuration of Sentra's environment variables.
+
 import os
 from dotenv import load_dotenv
 

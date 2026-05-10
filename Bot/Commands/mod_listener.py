@@ -1,3 +1,6 @@
+# ./Sentra-DiscordBot/Bot/Commands/mod_listener.py
+# All listeners for the modConfiguration, handles mod functionality of reading text messages alongside timing out and deleting messages based on toxicity scores.
+
 import time
 import asyncio
 import functools

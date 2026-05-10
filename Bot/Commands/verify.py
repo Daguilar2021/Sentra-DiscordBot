@@ -1,3 +1,6 @@
+# ./Sentra-DiscordBot/Bot/Commands/verify.py
+# This script handles the verification system for the matchmaking system. It allows users to verify their email with Sentra.
+
 import discord
 from discord import app_commands
 

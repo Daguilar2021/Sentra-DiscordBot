@@ -1,3 +1,6 @@
+# ./Sentra-DiscordBot/Bot/Commands/admin.py
+# All commands for the adminConfiguration, handles all / sentra commands that modify settings.
+
 import discord
 from discord import app_commands
 from Bot.DB.settings_store import get_or_create_settings, update_settings

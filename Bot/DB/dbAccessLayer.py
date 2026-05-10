@@ -1,3 +1,7 @@
+# ./Sentra-DiscordBot/Bot/DB/dbAccessLayer.py
+# SQL Database Models for Sentra, using SQLAlchemy ORM, using postgresql, 
+# This script creates the tables in the database, however it does not update them if they already exist.
+
 from sqlalchemy import Column, Integer, BigInteger, String, Boolean, Float, ForeignKey, UniqueConstraint
 from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.orm import declarative_base, relationship

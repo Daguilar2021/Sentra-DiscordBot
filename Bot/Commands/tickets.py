@@ -1,3 +1,6 @@
+# ./Sentra-DiscordBot/Bot/Commands/tickets.py
+# Handles ticket management for the matchmaking system.
+
 import discord
 import time
 import asyncio

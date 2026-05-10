@@ -1,3 +1,6 @@
+# ./Sentra-DiscordBot/Bot/Commands/resume.py
+# This script handles the resume system for the matchmaking system. It allows users to create, edit, and view resumes.
+
 import discord
 from discord import app_commands
 from Bot.DB.dbLink import get_session

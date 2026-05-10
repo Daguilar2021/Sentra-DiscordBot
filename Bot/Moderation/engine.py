@@ -1,3 +1,6 @@
+# ./Sentra-DiscordBot/Bot/Moderation/engine.py
+# This script handles the moderation engine for Sentra's toxicity detection. It uses a pre-trained XLM-RoBERTa toxicity classifier + KeyBERT for keyword extraction.
+
 import torch
 from transformers import AutoTokenizer, AutoModelForSequenceClassification
 from keybert import KeyBERT

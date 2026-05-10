@@ -1,3 +1,6 @@
+# ./Sentra-DiscordBot/Bot/main.py
+# This is the main entry point for the Sentra Discord bot. It handles the initialization of the bot and the registration of commands.
+
 import asyncio
 import threading
 import discord

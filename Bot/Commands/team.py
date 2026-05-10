@@ -1,3 +1,6 @@
+# ./Sentra-DiscordBot/Bot/Commands/team.py
+# This script handles the team functionality for the matchmaking system. It allows users to create, edit, and view teams.
+
 import discord
 from discord import app_commands
 from Bot.DB.dbLink import get_session

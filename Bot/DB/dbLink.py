@@ -1,3 +1,6 @@
+# ./Sentra-DiscordBot/Bot/DB/dbLink.py
+# Connects to the database and creates the tables (if they don't exist)
+
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from ..config import Config

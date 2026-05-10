@@ -1,13 +1,19 @@
+# ./Sentra-DiscordBot/Bot/oauth.py
+# This script handles the OAuth2 callback for Sentra's verification system.
+
 from flask import Flask, request, redirect
 import requests
 from .config import Config
 from .DB.dbLink import get_session
 from .DB.dbAccessLayer import User
 
+# Set Flask app name to avoid name collisions with discord.py
 app = Flask(__name__)
 
+# Callback route for OAuth2
 @app.route('/callback')
 def callback():
+    # Get code and state from request
     code = request.args.get('code')
     guild_id_str = request.args.get('state')
     if not code: return "Error: No code", 400
