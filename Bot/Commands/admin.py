@@ -93,7 +93,6 @@ async def view_config(interaction: discord.Interaction):
 
     embed = discord.Embed(title="Sentra Server Config", color=discord.Color.blurple())
     embed.add_field(name="Admin Role", value=fmt_role(s.admin_role_id), inline=False)
-    embed.add_field(name="Mentor Role", value=fmt_role(s.mentor_role_id), inline=False)
     embed.add_field(name="Ticket Support Role", value=fmt_role(s.ticket_support_role_id), inline=False)
     embed.add_field(name="Ticket Category", value=f"<#{s.ticket_category_id}>" if s.ticket_category_id else "Not set", inline=False)
     embed.add_field(name="Staff Channel", value=fmt_channel(s.staff_channel_id), inline=False)
@@ -137,11 +136,6 @@ async def create_admin_role(interaction: discord.Interaction, name: str = "Sentr
         await interaction.response.send_message("❌ I don't have permission to create roles (Missing 'Manage Roles').", ephemeral=True)
     except Exception as e:
         await interaction.response.send_message(f"❌ Failed to create role: {str(e)}", ephemeral=True)
-
-@sentra.command(name="set_mentor_role", description="Set the mentor role")
-async def set_mentor_role(interaction: discord.Interaction, role: discord.Role):
-    update_settings(interaction.guild.id, mentor_role_id=role.id)
-    await interaction.response.send_message(f"✅ Mentor role set to {role.mention}", ephemeral=True)
 
 @sentra.command(name="set_ticket_support_role", description="Set the role that handles tickets (automatically grants access to staff channel)")
 async def set_ticket_support_role(interaction: discord.Interaction, role: discord.Role):
@@ -214,7 +208,6 @@ async def quick_setup(interaction: discord.Interaction):
     try:
         # --- Roles ---
         admin_role = await guild.create_role(name="Sentra Admin", color=discord.Color.red(), reason="Sentra Quick Setup")
-        mentor_role = await guild.create_role(name="Mentor", color=discord.Color.gold(), reason="Sentra Quick Setup")
         support_role = await guild.create_role(name="Support Team", color=discord.Color.blue(), reason="Sentra Quick Setup")
         
         # --- Categories ---
@@ -260,7 +253,6 @@ async def quick_setup(interaction: discord.Interaction):
         update_settings(
             guild.id,
             admin_role_id=admin_role.id,
-            mentor_role_id=mentor_role.id,
             ticket_support_role_id=support_role.id,
             ticket_category_id=ticket_cat.id,
             team_category_id=team_cat.id,

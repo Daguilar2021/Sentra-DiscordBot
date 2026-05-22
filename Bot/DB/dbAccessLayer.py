@@ -52,7 +52,6 @@ class GuildSettings(Base):
     guild_id = Column(BigInteger, primary_key=True, index=True)
 
     # roles
-    mentor_role_id = Column(BigInteger, nullable=True)
     ticket_support_role_id = Column(BigInteger, nullable=True)
     admin_role_id = Column(BigInteger, nullable=True)
 
