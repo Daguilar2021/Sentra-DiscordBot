@@ -2,22 +2,17 @@
 # This is the main entry point for the Sentra Discord bot. It handles the initialization of the bot and the registration of commands.
 
 import asyncio
-import threading
 import discord
 from discord.ext import commands
 
 from Bot.config import Config
 from Bot.DB.dbLink import init_db
-from Bot.oauth import app
 from Bot.Commands.admin import sentra
 from Bot.Commands.verify import register_verify_command
 from Bot.Commands.tickets import TicketPanel, TicketActions, StaffClaimView
 from Bot.Commands.resume import resume_cmds
 from Bot.Commands.team import team_cmds, RequestToJoinView, ApproveJoinView
 from Bot.Commands.mod_listener import setup_mod_listener
-
-def run_flask():
-    app.run(port=5000, debug=False, use_reloader=False)
 
 intents = discord.Intents.none()
 intents.guilds = True
@@ -45,7 +40,6 @@ async def on_ready():
     print(f"✅ Logged in as {bot.user}")
 
     init_db()
-    threading.Thread(target=run_flask, daemon=True).start()
 
     # Load moderation engine (heavy model load — do once at startup)
     print("⏳ Loading moderation engine...")
