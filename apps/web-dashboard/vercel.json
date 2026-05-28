@@ -1,20 +1,7 @@
 {
-  "buildCommand": "npm run build",
     "rewrites": [
     {
-      "source": "^/$",
-      "destination": "/index.html"
-    },
-    {
-      "source": "^/documentation$",
-      "destination": "/index.html"
-    },
-    {
-      "source": "^/auth/success$",
-      "destination": "/index.html"
-    },
-    {
-      "source": "^/(.*)$",
+      "source": "/(.*)",
       "destination": "/index.html"
     }
   ]
