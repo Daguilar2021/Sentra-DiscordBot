@@ -1,8 +1,6 @@
 DotNetEnv.Env.Load("../../.env");
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
-builder.Services.AddOpenApi();
 
 builder.Services.AddCors(options =>
 {
@@ -20,10 +18,6 @@ builder.Services.AddCors(options =>
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
-{
-    app.MapOpenApi();
-}
 
 app.UseCors();
 
