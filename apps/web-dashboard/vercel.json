@@ -1,6 +1,6 @@
 {
   "buildCommand": "npm run build",
-  "outputDirectory": "dist/web-dashboard",
+  "outputDirectory": "dist/web-dashboard/browser",
   "cleanUrls": true,
   "trailingSlash": false,
   "rewrites": [
