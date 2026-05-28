@@ -47,6 +47,8 @@ app.MapPost("/api/auth/discord/callback", async (DiscordCallbackRequest request)
     });
 });
 
+app.MapGet("/health", () => Results.Ok("Healthy"));
+
 app.MapGet("/api/invite", (IConfiguration config) =>
 {
     var clientId = config["CLIENT_ID"];
