@@ -24,6 +24,26 @@ if (app.Environment.IsDevelopment())
 
 app.UseCors();
 
+app.MapPost("/api/auth/discord/callback", async (DiscordCallbackRequest request) =>
+{
+    if (string.IsNullOrWhiteSpace(request.Code))
+        return Results.BadRequest(new { error = "Missing Discord code" });
+
+    if (string.IsNullOrWhiteSpace(request.State))
+        return Results.BadRequest(new { error = "Missing state/guild_id" });
+
+    // Later: exchange code with Discord
+    // Later: get Discord user
+    // Later: save user to Supabase/Postgres
+
+    return Results.Ok(new
+    {
+        message = "OAuth callback received",
+        code = request.Code,
+        state = request.State
+    });
+});
+
 app.MapGet("/api/invite", (IConfiguration config) =>
 {
     var clientId = config["CLIENT_ID"];
@@ -39,7 +59,8 @@ app.MapGet("/api/invite", (IConfiguration config) =>
 
 app.Run();
 
-record WeatherForecast(DateOnly Date, int TemperatureC, string? Summary)
+public class DiscordCallbackRequest
 {
-    public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
+    public string Code { get; set; } = "";
+    public string State { get; set; } = "";
 }
