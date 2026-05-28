@@ -17,8 +17,6 @@ builder.Services.AddCors(options =>
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
-
 app.UseCors();
 
 app.MapPost("/api/auth/discord/callback", async (DiscordCallbackRequest request) =>
@@ -40,6 +38,9 @@ app.MapPost("/api/auth/discord/callback", async (DiscordCallbackRequest request)
         state = request.State
     });
 });
+
+//health check endpoint
+app.MapGet("/api/health", () => Results.Ok("Healthy"));
 
 app.MapGet("/api/invite", (IConfiguration config) =>
 {
