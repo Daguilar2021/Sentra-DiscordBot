@@ -1,12 +1,12 @@
 {
   "buildCommand": "npm run build",
-  "outputDirectory": "dist/web-dashboard/browser",
+  "outputDirectory": "dist/web-dashboard",
   "cleanUrls": true,
   "trailingSlash": false,
-  "routes": [
+  "rewrites": [
     {
-      "src": "/(.*)",
-      "dest": "/index.html"
+      "source": "/(.*)",
+      "destination": "/index.html"
     }
   ]
 }
