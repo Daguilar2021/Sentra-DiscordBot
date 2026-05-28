@@ -10,7 +10,7 @@ builder.Services.AddCors(options =>
     {
         policy.WithOrigins(
             "http://localhost:4200",
-            "https://sentradev.vercel.app",
+            "https://sentradev.vercel.app"
              )
               .AllowAnyHeader()
               .AllowAnyMethod();
@@ -46,8 +46,6 @@ app.MapPost("/api/auth/discord/callback", async (DiscordCallbackRequest request)
         state = request.State
     });
 });
-
-app.MapGet("/api/health", () => Results.Ok("Healthy"));
 
 app.MapGet("/api/invite", (IConfiguration config) =>
 {
