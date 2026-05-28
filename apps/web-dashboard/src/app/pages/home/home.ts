@@ -2,6 +2,11 @@
   import { FeatureCard } from '../../feature-card/feature-card';
   import { DiscordService } from '../../services/discord';
 
+  interface InviteUrlObserver {
+    next: (url: string) => void;
+    error: (err: unknown) => void;
+  }
+
   @Component({
     selector: 'app-home',
     imports: [FeatureCard],
@@ -9,11 +14,18 @@
     styleUrl: './home.css',
   })
   export class Home {
-    private discordService = inject(DiscordService);
+    private discordService: DiscordService = inject(DiscordService);
 
-    connectDiscord() {
-      this.discordService.getInviteUrl().subscribe(url => {
-        window.open(url, '_blank');
-      });
+    connectDiscord(): void {
+      const observer: InviteUrlObserver = {
+        next: (url: string) => {
+          window.location.href = url;
+        },
+        error: (err: unknown) => {
+          console.error('Failed to get invite URL:', err);
+        }
+      };
+
+      this.discordService.getInviteUrl().subscribe(observer);
     }
   }
