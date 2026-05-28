@@ -3,22 +3,22 @@
   "outputDirectory": "dist/web-dashboard/browser",
   "cleanUrls": true,
   "trailingSlash": false,
-    "routes": [
+    "rewrites": [
     {
-      "src": "^/$",
-      "dest": "/index.html"
+      "source": "^/$",
+      "destination": "/index.html"
     },
     {
-      "src": "^/documentation$",
-      "dest": "/index.html"
+      "source": "^/documentation$",
+      "destination": "/index.html"
     },
     {
-      "src": "^/auth/success$",
-      "dest": "/index.html"
+      "source": "^/auth/success$",
+      "destination": "/index.html"
     },
     {
-      "src": "^/(.*)$",
-      "dest": "/index.html"
+      "source": "^/(.*)$",
+      "destination": "/index.html"
     }
   ]
 }
