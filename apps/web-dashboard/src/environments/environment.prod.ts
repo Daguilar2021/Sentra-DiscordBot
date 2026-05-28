@@ -1,4 +1,4 @@
 export const environment = {
   production: false,
-  apiBaseUrl: 'http://localhost:5121'
+  apiBaseUrl: 'https://sentra-discordbot-production-2683.up.railway.app'
 };
