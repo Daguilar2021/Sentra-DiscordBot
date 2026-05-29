@@ -3,8 +3,8 @@
 
 import discord
 from discord import app_commands
-from Bot.DB.dbLink import get_session
-from Bot.DB.dbAccessLayer import User
+from DB.dbLink import get_session
+from DB.dbAccessLayer import User
 from sqlalchemy.orm.attributes import flag_modified
 
 VALID_SKILLS = [

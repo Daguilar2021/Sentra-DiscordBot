@@ -4,7 +4,7 @@ import urllib.parse
 import discord
 from discord import app_commands
 
-from Bot.config import Config
+from config import Config
 
 def register_verify_command(tree: app_commands.CommandTree):
     @tree.command(name="verify", description="Verify your email with Sentra")

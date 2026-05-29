@@ -4,10 +4,9 @@
 import discord
 import time
 import asyncio
-from discord import app_commands
-from Bot.DB.settings_store import get_or_create_settings, update_settings
-from Bot.DB.dbLink import get_session
-from Bot.DB.dbAccessLayer import Ticket
+from DB.settings_store import get_or_create_settings, update_settings
+from DB.dbLink import get_session
+from DB.dbAccessLayer import Ticket
 
 class TicketActions(discord.ui.View):
     def __init__(self):

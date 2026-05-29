@@ -8,9 +8,9 @@ from datetime import timedelta
 
 import discord
 
-from Bot.DB.dbLink import get_session
-from Bot.DB.dbAccessLayer import Infraction
-from Bot.DB.settings_store import get_or_create_settings
+from DB.dbLink import get_session
+from DB.dbAccessLayer import Infraction
+from DB.settings_store import get_or_create_settings
 
 
 def setup_mod_listener(bot: discord.ext.commands.Bot, engine):

@@ -4,14 +4,14 @@
 import asyncio
 import discord
 from discord.ext import commands
-from Bot.config import Config
-from Bot.DB.dbLink import init_db
-from Bot.Commands.admin import sentra
-from Bot.Commands.verify import register_verify_command
-from Bot.Commands.tickets import TicketPanel, TicketActions, StaffClaimView
-from Bot.Commands.resume import resume_cmds
-from Bot.Commands.team import team_cmds, RequestToJoinView, ApproveJoinView
-from Bot.Commands.mod_listener import setup_mod_listener
+from config import Config
+from DB.dbLink import init_db
+from Commands.admin import sentra
+from Commands.verify import register_verify_command
+from Commands.tickets import TicketPanel, TicketActions, StaffClaimView
+from Commands.resume import resume_cmds
+from Commands.team import team_cmds, RequestToJoinView, ApproveJoinView
+from Commands.mod_listener import setup_mod_listener
 
 intents = discord.Intents.none()
 intents.guilds = True

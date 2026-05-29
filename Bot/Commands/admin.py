@@ -3,9 +3,9 @@
 
 import discord
 from discord import app_commands
-from Bot.DB.settings_store import get_or_create_settings, update_settings
-from Bot.DB.dbLink import get_session
-from Bot.DB.dbAccessLayer import Infraction
+from DB.settings_store import get_or_create_settings, update_settings
+from DB.dbLink import get_session
+from DB.dbAccessLayer import Infraction
 
 def is_admin_or_owner(interaction: discord.Interaction) -> bool:
     if not interaction.guild:

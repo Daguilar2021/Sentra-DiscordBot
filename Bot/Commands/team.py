@@ -3,9 +3,9 @@
 
 import discord
 from discord import app_commands
-from Bot.DB.dbLink import get_session
-from Bot.DB.dbAccessLayer import User, Team
-from Bot.DB.settings_store import get_or_create_settings
+from DB.dbLink import get_session
+from DB.dbAccessLayer import User, Team
+from DB.settings_store import get_or_create_settings
 
 
 # ── Helper: build the lobby embed for #find-teammates ──────────────────
