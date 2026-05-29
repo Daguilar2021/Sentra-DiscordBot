@@ -1,8 +1,8 @@
 # ./Sentra-DiscordBot/Bot/DB/settings_store.py
 # This script handles the storage and retrieval of guild settings
 
-from Bot.DB.dbLink import get_session
-from Bot.DB.dbAccessLayer import GuildSettings
+from DB.dbLink import get_session
+from DB.dbAccessLayer import GuildSettings
 
 def get_or_create_settings(guild_id: int) -> GuildSettings:
     db = get_session()
