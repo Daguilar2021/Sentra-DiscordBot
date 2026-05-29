@@ -1,11 +1,9 @@
+--extra-index-url https://download.pytorch.org/whl/cpu
+
 # Core Bot & Environment
 discord.py==2.6.4
 python-dotenv==1.2.1
 requests==2.32.5
-
-# Web & Dashboard
-Flask==3.1.2
-
 
 # Database
 SQLAlchemy==2.0.46
