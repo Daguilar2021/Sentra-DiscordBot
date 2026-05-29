@@ -90,6 +90,12 @@
   animation: fadeSlideUp 0.8s 0.45s ease-out both;
 }
 
+/* ── Call to Action Buttons ─────────────────────────────────── */
+.hero-actions {
+  display: flex;
+  gap: 1rem;
+  animation: fadeSlideUp 0.8s 0.6s ease-out both;
+}
 
 
 /* ── Animations ──────────────────────────────────────────────── */
@@ -136,16 +142,20 @@
   }
 }
 
+
 @media (max-width: 639px) {
   .feature-grid {
     grid-template-columns: 1fr;
   }
 
   .hero-actions {
+    
     flex-direction: column;
+    gap: 0.75rem;
   }
 
   .btn {
     width: 100%;
   }
+
 }

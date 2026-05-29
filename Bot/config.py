@@ -11,8 +11,10 @@ class Config:
     TOKEN = os.getenv('BOT_TOKEN')
     CLIENT_ID = os.getenv('CLIENT_ID')
     CLIENT_SECRET = os.getenv('CLIENT_SECRET')
-    REDIRECT_URI = os.getenv('REDIRECT_URI')
+    API_URL = os.getenv('API_URL')
     DATABASE_URL = os.getenv('DATABASE_URL')
+    CONNECTION_STRINGS = os.getenv('CONNECTION_STRINGS')
+
     
     # Ensure all required variables are present
     @classmethod

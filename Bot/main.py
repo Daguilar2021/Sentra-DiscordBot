@@ -4,7 +4,6 @@
 import asyncio
 import discord
 from discord.ext import commands
-
 from Bot.config import Config
 from Bot.DB.dbLink import init_db
 from Bot.Commands.admin import sentra
