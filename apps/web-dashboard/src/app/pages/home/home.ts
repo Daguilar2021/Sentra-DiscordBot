@@ -28,4 +28,9 @@
 
       this.discordService.getInviteUrl().subscribe(observer);
     }
+
+    // redirect to documentation page
+    learnMore(): void {
+      window.location.href = '/documentation';
+    }
   }

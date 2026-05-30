@@ -1,1 +1,210 @@
-<p>documentation works!</p>
+<div class="admin-page">
+  <div class="admin-container">
+    <header class="admin-header">
+      <h1>Sentra Admin Commands</h1>
+      <p>
+        All administrative commands are available under
+        <code>/sentra</code>.
+      </p>
+    </header>
+
+    <nav class="section">
+        <h2 class="section-title">Table of Contents</h2>
+        <ul class="toc-list">
+            <li><a (click)="scrollTo('general-config', $event)"
+                [class.active]="activeSection === 'general-config'">General Configuration</a></li>
+            <li><a (click)="scrollTo('role-config', $event)"
+                [class.active]="activeSection === 'role-config'">Role Configuration</a></li>
+            <li><a (click)="scrollTo('ticketing', $event)"
+                [class.active]="activeSection === 'ticketing'">Ticketing System</a></li>
+            <li><a (click)="scrollTo('team-formation', $event)"
+                [class.active]="activeSection === 'team-formation'">Team Formation System</a></li>
+            <li><a (click)="scrollTo('moderation', $event)"
+                [class.active]="activeSection === 'moderation'">Moderation System</a></li>
+            <li><a (click)="scrollTo('permissions', $event)"
+                [class.active]="activeSection === 'permissions'">Permissions</a></li>
+            <li><a (click)="scrollTo('setup-order', $event)"
+                [class.active]="activeSection === 'setup-order'">Recommended Setup Order</a></li>
+        </ul>
+    </nav>
+
+    <main>
+      <section id="general-config" class="section">
+        <h2 class="section-title">General Configuration</h2>
+
+        <div class="command-card">
+          <h3 class="command-name"><code>/sentra view_config</code></h3>
+          <p>
+            Displays the current Sentra configuration for the server, including
+            roles, channels, categories, moderation settings, and team settings.
+          </p>
+        </div>
+
+        <div class="command-card">
+          <h3 class="command-name"><code>/sentra quick_setup</code></h3>
+          <p>Automatically creates and configures all required Sentra resources:</p>
+          <ul>
+            <li>Sentra Admin role</li>
+            <li>Support Team role</li>
+            <li>Support Tickets category</li>
+            <li>Hackathon Teams category</li>
+            <li>Sentra Staff category</li>
+            <li>find-teammates channel</li>
+            <li>support channel</li>
+            <li>staff-alerts channel</li>
+            <li>mod-logs channel</li>
+          </ul>
+          <p>Also posts the ticket panel automatically.</p>
+        </div>
+      </section>
+
+      <section id="role-config" class="section">
+        <h2 class="section-title">Role Configuration</h2>
+
+        <div class="command-card">
+          <h3 class="command-name"><code>/sentra create_admin_role</code></h3>
+          <p>
+            Creates a dedicated Sentra Admin role. Members with this role can
+            access all Sentra administrative commands.
+          </p>
+        </div>
+
+        <div class="command-card">
+          <h3 class="command-name"><code>/sentra set_ticket_support_role</code></h3>
+          <p>
+            Sets the role responsible for handling support tickets. Members with
+            this role gain access to ticket-related staff channels and notifications.
+          </p>
+        </div>
+      </section>
+
+      <section id="ticketing" class="section">
+        <h2 class="section-title">Ticketing System</h2>
+
+        <div class="command-card">
+          <h3 class="command-name"><code>/sentra set_ticket_category</code></h3>
+          <p>Sets the category where new support tickets will be created.</p>
+        </div>
+
+        <div class="command-card">
+          <h3 class="command-name"><code>/sentra set_staff_channel</code></h3>
+          <p>Sets the channel used for ticket notifications and staff alerts.</p>
+        </div>
+
+        <div class="command-card">
+          <h3 class="command-name"><code>/sentra setup_tickets</code></h3>
+          <p>
+            Posts the ticket creation panel in the current channel, allowing users
+            to open private support tickets.
+          </p>
+
+          <div class="info-box">
+            <h4>Required Setup</h4>
+            <ol>
+                <li>Configure a Ticket Category</li>
+                <li>Configure a Support Role</li>
+                <li>Configure a Staff Channel</li>
+                <li>Run Setup Tickets</li>
+            </ol>
+          </div>
+        </div>
+      </section>
+
+      <section id="team-formation" class="section">
+        <h2 class="section-title">Team Formation System</h2>
+
+        <div class="command-card">
+          <h3 class="command-name"><code>/sentra set_find_teammates_channel</code></h3>
+          <p>Sets the channel used for teammate recruitment and matchmaking.</p>
+        </div>
+
+        <div class="command-card">
+          <h3 class="command-name"><code>/sentra set_team_category</code></h3>
+          <p>Sets the category where Sentra creates team channels.</p>
+        </div>
+
+        <div class="command-card">
+          <h3 class="command-name"><code>/sentra set_max_team_size</code></h3>
+          <p>Sets the maximum number of members allowed in a team.</p>
+          <p><strong>Allowed Range:</strong> 2–10 members.</p>
+        </div>
+      </section>
+
+      <section id="moderation" class="section">
+        <h2 class="section-title">Moderation System</h2>
+
+        <div class="command-card">
+          <h3 class="command-name"><code>/sentra set_mod_channel</code></h3>
+          <p>
+            Sets the moderation log channel and enables Sentra's automated
+            moderation system.
+          </p>
+        </div>
+
+        <div class="command-card">
+          <h3 class="command-name"><code>/sentra set_toxicity_threshold</code></h3>
+          <p>Adjusts moderation sensitivity.</p>
+          <ul>
+            <li>0.0 = Very Strict</li>
+            <li>1.0 = Very Lenient</li>
+            <li>Recommended: 0.7</li>
+          </ul>
+        </div>
+
+        <div class="command-card">
+          <h3 class="command-name"><code>/sentra view_infractions</code></h3>
+          <p>
+            Displays a user's recent moderation history, including toxicity scores,
+            actions taken, timestamps, and detected keywords.
+          </p>
+        </div>
+      </section>
+
+      <section id="permissions" class="section">
+        <h2 class="section-title">Permissions</h2>
+
+        <div class="command-card">
+          <p>Sentra administrative commands can only be used by:</p>
+          <ul>
+            <li>Server Owner</li>
+            <li>Discord Administrators</li>
+            <li>Members with the Sentra Admin role</li>
+          </ul>
+        </div>
+      </section>
+
+      <section id="setup-order" class="section">
+        <h2 class="section-title">Recommended Setup Order</h2>
+
+        <div class="setup-card">
+          <ol>
+            <li class="setup-step">
+              <span class="setup-number">1</span>
+              <span><code>/sentra quick_setup</code></span>
+            </li>
+            <li class="setup-step">
+              <span class="setup-number">2</span>
+              <span>Assign Sentra Admin role</span>
+            </li>
+            <li class="setup-step">
+              <span class="setup-number">3</span>
+              <span>Assign Support Team role</span>
+            </li>
+            <li class="setup-step">
+              <span class="setup-number">4</span>
+              <span><code>/sentra view_config</code></span>
+            </li>
+            <li class="setup-step">
+              <span class="setup-number">5</span>
+              <span>Verify all settings are configured correctly</span>
+            </li>
+          </ol>
+        </div>
+      </section>
+    </main>
+
+    <footer class="footer">
+      <p>Sentra Bot Documentation</p>
+    </footer>
+  </div>
+</div>

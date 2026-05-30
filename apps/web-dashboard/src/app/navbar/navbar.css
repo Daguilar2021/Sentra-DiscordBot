@@ -79,6 +79,7 @@
 .navbar-logo-text {
   font-size: 1.25rem;
   font-weight: 700;
+  text-decoration: none;
   background: #e6dede;
   background-clip: text;
   -webkit-background-clip: text;
@@ -89,6 +90,7 @@
   background: none;
   border: none;
   color: var(--color-gray-300);
+  text-decoration: none;
   font-size: 1rem;
   font-family: inherit;
   cursor: pointer;

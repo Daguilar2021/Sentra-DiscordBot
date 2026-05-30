@@ -8,6 +8,7 @@ from DB.dbLink import get_session
 from DB.dbAccessLayer import Infraction
 
 def is_admin_or_owner(interaction: discord.Interaction) -> bool:
+    """Check if the user is the server owner, has administrator permissions, or has the custom admin role."""
     if not interaction.guild:
         return False
     if interaction.user.id == interaction.guild.owner_id:
@@ -71,6 +72,7 @@ class SentraAdmin(app_commands.Group):
         super().__init__(name="sentra", description="Sentra admin configuration commands")
 
     async def interaction_check(self, interaction: discord.Interaction) -> bool:
+        """Override to restrict access to admins/owner only."""
         if not is_admin_or_owner(interaction):
             await interaction.response.send_message(
                 "Only server admins/owner can use Sentra setup commands.",

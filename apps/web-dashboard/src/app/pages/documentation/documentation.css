@@ -1,0 +1,150 @@
+html {
+  scroll-behavior: smooth;
+}
+
+.admin-page {
+  min-height: 100vh;
+}
+
+.admin-container {
+  max-width: 64rem;
+  margin: 0 auto;
+  padding: 3rem 1.5rem;
+}
+
+.admin-header {
+  margin-bottom: 3rem;
+}
+
+.section {
+   padding: 1.5rem;
+   border-radius: 12px;
+   margin-bottom: 3rem;
+   background:#1f1b5a
+}
+
+
+.section[id] {
+  scroll-margin-top: 5rem;
+}
+
+.section-title {
+  font-size: 2rem;
+  font-weight: 700;
+  margin-bottom: 1.5rem;
+}
+
+/* Table of Contents */
+nav {
+  padding: 1.5rem;
+  border-radius: 0.75rem;
+}
+
+nav ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+nav li {
+  margin-bottom: 0.75rem;
+}
+
+nav li:last-child {
+  margin-bottom: 0;
+}
+
+nav a {
+  display: flex;
+  align-items: center;
+  padding: 0.75rem 1rem;
+  border-radius: 0.5rem;
+  font-weight: 500;;
+  text-decoration: none;
+  border-radius: 0.5rem;
+  transition: all 0.2s ease;
+  cursor: pointer;
+  position: relative;
+}
+
+nav a::before {
+  content: "→";
+  width: 4px;
+  height: 100%;
+  position: absolute;
+  margin-right: 0.75rem;
+  opacity: 0.6;
+  transition: all 0.2s ease;;
+}
+
+nav a:hover {
+  transform: translateX(4px);
+}
+
+nav a:hover::before {
+  opacity: 1;
+}
+
+nav a.active {
+  font-weight: 600;
+}
+
+nav a.active::before {
+  opacity: 1;
+}
+
+.command-card {
+  padding: 1.5rem;
+  border-radius: 0.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.command-name {
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin-bottom: 0.75rem;
+}
+
+.info-box {
+  padding: 1rem;
+  border: 1px solid #6366f1;
+  background: rgba(99, 102, 241, 0.1);
+  border-radius: 0.5rem;
+}
+
+.info-box ol {
+  margin: 0;
+  padding-left: 2rem;
+}
+
+.info-box li {
+  margin-bottom: 0.5rem;
+}
+
+.setup-card {
+  padding: 1.5rem;
+  border-radius: 0.5rem;
+}
+
+.setup-step {
+  display: flex;
+  align-items: flex-start;
+  margin-bottom: 1rem;
+}
+
+.setup-number {
+  width: 2rem;
+  height: 2rem;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  margin-right: 0.75rem;
+}
+
+.footer {
+  margin-top: 4rem;
+  padding-top: 2rem;
+  text-align: center;
+}
