@@ -1,5 +1,52 @@
 # Sentra-DiscordBot
+
 Sentra is a Discord Bot tailored towards improving organization and minimizing friction between participants and organizers in large events like Hackathons
+
+## Docker Local Development
+
+This repo includes a Docker Compose setup for local development. It follows the same root-level Compose pattern used by the Odysseus project: Compose is the main local entry point, and each app service has a focused Dockerfile.
+
+Start the database, .NET API, and Angular dashboard:
+
+```powershell
+docker compose up -d --build
+```
+
+Open:
+
+- Dashboard: `http://localhost:4200`
+- API health check: `http://localhost:5000/api/health`
+- Postgres: `localhost:5432`
+
+Start the Discord bot too:
+
+```powershell
+docker compose --profile bot up -d --build
+```
+
+The bot profile expects real Discord credentials in `.env`. The first bot startup can take a while because the moderation model dependencies are large and the Hugging Face model cache is persisted in the `sentra-huggingface-cache` Docker volume.
+
+Useful checks:
+
+```powershell
+docker compose ps
+docker compose logs --tail=120 api
+docker compose logs --tail=120 dashboard
+docker compose --profile bot logs --tail=120 bot
+```
+
+Compose provides local database defaults if you do not override them:
+
+```env
+POSTGRES_DB=sentra
+POSTGRES_USER=sentra
+POSTGRES_PASSWORD=sentra
+POSTGRES_PORT=5432
+API_PORT=5000
+DASHBOARD_PORT=4200
+```
+
+Inside containers, the database URL is overridden to use the Compose service name `postgres`. Keep using localhost values when you run pieces directly on your host machine.
 
 ## 🛠️ Local Development Setup
 
