@@ -1,91 +1,237 @@
 # Sentra-DiscordBot
 
-Sentra is a Discord Bot tailored towards improving organization and minimizing friction between participants and organizers in large events like Hackathons
+Sentra is a Discord bot designed to improve organization and reduce friction between participants, mentors, and organizers at large-scale events such as hackathons.
 
-## Docker Local Development
+## Overview
 
-This repo includes a Docker Compose setup for local development. It follows the same root-level Compose pattern used by the Odysseus project: Compose is the main local entry point, and each app service has a focused Dockerfile.
+Sentra consists of four main components:
 
-Start the database, .NET API, and Angular dashboard:
+* Discord Bot (Python)
+* Web Dashboard (Angular)
+* Backend API (.NET)
+* PostgreSQL Database
 
-```powershell
+For local development, all services can be started using Docker Compose.
+
+## Prerequisites
+
+Before getting started, install:
+
+* Docker Desktop (Windows/macOS) or Docker Engine (Linux)
+* Git
+* A Discord Developer Application for OAuth testing
+
+## Clone the Repository
+
+```bash
+git clone <repository-url>
+cd sentra
+```
+
+## Configure Environment Variables
+
+Copy the example environment file:
+
+```bash
+cp .env.example .env
+```
+
+At a minimum, configure the following values:
+
+```env
+CLIENT_ID=your_discord_client_id
+CLIENT_SECRET=your_discord_client_secret
+
+POSTGRES_DB=sentra
+POSTGRES_USER=sentra
+POSTGRES_PASSWORD=sentra
+```
+
+> **Important:** Never commit your `.env` file. Use `.env.example` as the template and keep secrets such as `CLIENT_SECRET` private.
+
+## Local Development
+
+### Start Core Services
+
+Build and start PostgreSQL, the API, and the Dashboard:
+
+```bash
 docker compose up -d --build
 ```
 
 Open:
 
-- Dashboard: `http://localhost:4200`
-- API health check: `http://localhost:5000/api/health`
-- Postgres: `localhost:5432`
+| Service    | URL                   |
+| ---------- | --------------------- |
+| Dashboard  | http://localhost:4200 |
+| API        | http://localhost:5000 |
+| PostgreSQL | localhost:5432        |
 
-Start the Discord bot too:
+### Run the Discord Bot
 
-```powershell
+The Discord Bot is configured as an optional Docker Compose profile.
+
+To run it alongside the API, Dashboard, and PostgreSQL services:
+
+```bash
 docker compose --profile bot up -d --build
 ```
 
-The bot profile expects real Discord credentials in `.env`. The first bot startup can take a while because the moderation model dependencies are large and the Hugging Face model cache is persisted in the `sentra-huggingface-cache` Docker volume.
+The bot profile expects valid Discord credentials in `.env`.
 
-Useful checks:
+The first startup may take several minutes because moderation model dependencies are downloaded and cached. The Hugging Face cache is persisted in the `sentra-huggingface-cache` Docker volume.
 
-```powershell
+### Useful Commands
+
+View running services:
+
+```bash
 docker compose ps
+```
+
+View API logs:
+
+```bash
 docker compose logs --tail=120 api
+```
+
+View Dashboard logs:
+
+```bash
 docker compose logs --tail=120 dashboard
+```
+
+View Bot logs:
+
+```bash
 docker compose --profile bot logs --tail=120 bot
 ```
 
-Compose provides local database defaults if you do not override them:
+### Stop Services
+
+Stop all running containers:
+
+```bash
+docker compose down
+```
+
+Stop all containers and remove database volumes:
+
+```bash
+docker compose down -v
+```
+
+### Rebuild Everything
+
+If you encounter issues during development, rebuilding the environment often resolves them:
+
+```bash
+docker compose down -v
+docker compose up --build
+```
+
+## Database Defaults
+
+Docker Compose provides the following defaults if they are not overridden:
 
 ```env
 POSTGRES_DB=sentra
 POSTGRES_USER=sentra
 POSTGRES_PASSWORD=sentra
 POSTGRES_PORT=5432
+
 API_PORT=5000
 DASHBOARD_PORT=4200
 ```
 
-Inside containers, the database URL is overridden to use the Compose service name `postgres`. Keep using localhost values when you run pieces directly on your host machine.
+Inside Docker containers, services communicate using Docker service names.
 
-## 🛠️ Local Development Setup
+For example, the PostgreSQL hostname is:
 
-Because Sentra uses a Web Dashboard that requires users to log in via Discord (OAuth2), Discord needs a secure, public `https://` URL to send users back to after they authenticate. 
+```text
+postgres
+```
 
-When developing locally, your `localhost` is not accessible to the internet. To fix this, you must set up a **Cloudflare Tunnel** to securely expose your local backend.
+When running services directly on your host machine instead of Docker, continue using:
 
-### Setting Up a Temporary Cloudflare Tunnel (Quick Start)
+```text
+localhost
+```
 
-Follow these steps to generate a temporary, public URL for your local environment:
+> **Note:** The database initialization script only runs when the PostgreSQL volume is created for the first time. If you modify the schema and need a fresh local database, run:
 
-1. **Install Cloudflared CLI**
-   * **Windows:** Download and install via [Winget](https://learn.microsoft.com/en-us/windows/package-manager/winget/): `winget install Cloudflare.cloudflared` (or download the `.exe` from [Cloudflare's GitHub](https://github.com/cloudflare/cloudflared/releases)).
-   * **macOS:** Install via Homebrew: `brew install cloudflare/cloudflare/cloudflared`
-   * **Linux:** Download the `.deb` or `.rpm` package from the [Cloudflare releases page](https://github.com/cloudflare/cloudflared/releases).
+```bash
+docker compose down -v
+docker compose up --build
+```
 
-2. **Start the Tunnel**
-   Run the following command in your terminal to route traffic from a public URL to your local backend (assuming the OAuth callbacks are handled on port 5000):
-   ```bash
-   cloudflared tunnel --url http://localhost:5000
-   ```
+## OAuth Development with Cloudflare Tunnel
 
-3. **Get Your Public URL**
-   In the terminal output, look for a line that says something like: 
-   `https://<random-words>.trycloudflare.com`. Copy this URL. Keep the terminal open, as closing it will kill the tunnel.
+Discord OAuth requires a publicly accessible HTTPS callback URL.
 
-4. **Update Your Discord Developer App**
-   * Go to the [Discord Developer Portal](https://discord.com/developers/applications) and select your application.
-   * Navigate to the **OAuth2** tab.
-   * Under **Redirects**, add your new URL appended with `/callback`. 
-   * *Example:* `https://<random-words>.trycloudflare.com/callback`
-   * Save your changes.
+Because your local machine is not accessible from the internet, you must create a temporary Cloudflare Tunnel when testing authentication and verification workflows.
 
-5. **Update Your `.env` File**
-   * Open the `.env` file in the root of the project.
-   * Find the `REDIRECT_URI` variable.
-   * Paste the exact same URL you added to Discord:
-     ```env
-     REDIRECT_URI=https://<random-words>.trycloudflare.com/callback
-     ```
+### Install Cloudflared
 
-> **Important:** Because this is a *temporary* tunnel, the URL will change every time you restart the `cloudflared` command. You will need to update both your `.env` file and the Discord Developer Portal with the new URL whenever you start a new session.
+#### Windows
+
+```bash
+winget install Cloudflare.cloudflared
+```
+
+#### macOS
+
+```bash
+brew install cloudflare/cloudflare/cloudflared
+```
+
+#### Linux
+
+Download and install the appropriate package from the Cloudflare releases page.
+
+### Start a Tunnel
+
+Expose the local API running on port 5000:
+
+```bash
+cloudflared tunnel --url http://localhost:5000
+```
+
+Cloudflare will generate a public URL similar to:
+
+```text
+https://example-name.trycloudflare.com
+```
+
+Keep the terminal window open while testing. Closing it will terminate the tunnel.
+
+### Configure Discord OAuth
+
+1. Open the Discord Developer Portal.
+2. Select your application.
+3. Navigate to **OAuth2 → Redirects**.
+4. Add the callback URL:
+
+```text
+https://example-name.trycloudflare.com/api/auth/callback
+```
+
+5. Save your changes.
+
+### Update Local Environment Variables
+
+Update your `.env` file:
+
+```env
+API_URL=https://example-name.trycloudflare.com
+```
+
+Restart the API container:
+
+```bash
+docker compose restart api
+```
+
+You can now test Discord authentication locally using the Cloudflare Tunnel URL.
+
+> **Important:** Because this is a temporary tunnel, the URL changes every time you restart `cloudflared`. Whenever a new tunnel URL is generated, update both your `.env` file and the Discord Developer Portal redirect URI.

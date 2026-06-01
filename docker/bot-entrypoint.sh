@@ -9,9 +9,7 @@ if [ "$(id -u)" = "0" ]; then
         groupmod -g "$PGID" sentra
     fi
 
-    if ! id -u "$PUID" >/dev/null 2>&1; then
-        usermod -u "$PUID" -g "$PGID" sentra
-    fi
+    usermod -u "$PUID" -g "$PGID" sentra
 
     mkdir -p /app/data /app/logs /home/sentra/.cache/huggingface
     chown -R "$PUID:$PGID" /app/data /app/logs /home/sentra/.cache

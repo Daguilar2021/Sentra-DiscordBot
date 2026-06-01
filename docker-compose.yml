@@ -1,81 +1,81 @@
-services:
-  postgres:
-    image: postgres:16-alpine
-    environment:
-      POSTGRES_DB: ${POSTGRES_DB:-sentra}
-      POSTGRES_USER: ${POSTGRES_USER:-sentra}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-sentra}
-    ports:
-      - "${POSTGRES_PORT:-5432}:5432"
-    volumes:
-      - sentra-postgres-data:/var/lib/postgresql/data
-      - ./supabase/migrations/20260527134500_init.sql:/docker-entrypoint-initdb.d/001_init.sql:ro
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
+  services:
+    postgres:
+      image: postgres:16-alpine
+      environment:
+        POSTGRES_DB: ${POSTGRES_DB:-sentra}
+        POSTGRES_USER: ${POSTGRES_USER:-sentra}
+        POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-sentra}
+      ports:
+        - "${POSTGRES_PORT:-5432}:5432"
+      volumes:
+        - sentra-postgres-data:/var/lib/postgresql/data
+        - ./supabase/migrations/20260527134500_init.sql:/docker-entrypoint-initdb.d/001_init.sql:ro
+      healthcheck:
+        test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+        interval: 10s
+        timeout: 5s
+        retries: 5
 
-  api:
-    build:
-      context: .
-      dockerfile: apps/api/Dockerfile
-    environment:
-      ASPNETCORE_ENVIRONMENT: Development
-      ASPNETCORE_URLS: http://0.0.0.0:5000
-      CLIENT_ID: ${CLIENT_ID:-}
-      CLIENT_SECRET: ${CLIENT_SECRET:-}
-      API_URL: ${API_URL:-http://localhost:5000}
-      FRONTEND_URL: ${FRONTEND_URL:-http://localhost:4200}
-      CONNECTION_STRINGS: Host=postgres;Port=5432;Database=${POSTGRES_DB:-sentra};Username=${POSTGRES_USER:-sentra};Password=${POSTGRES_PASSWORD:-sentra};SSL Mode=Disable
-    ports:
-      - "${API_PORT:-5000}:5000"
-    volumes:
-      - .:/workspace
-      - sentra-dotnet-packages:/root/.nuget/packages
-    depends_on:
-      postgres:
-        condition: service_healthy
+    api:
+      build:
+        context: .
+        dockerfile: apps/api/Dockerfile
+      environment:
+        ASPNETCORE_ENVIRONMENT: Development
+        ASPNETCORE_URLS: http://0.0.0.0:5000
+        CLIENT_ID: ${CLIENT_ID:-}
+        CLIENT_SECRET: ${CLIENT_SECRET:-}
+        API_URL: http://api:5000
+        FRONTEND_URL: ${FRONTEND_URL:-http://localhost:4200}
+        CONNECTION_STRINGS: Host=postgres;Port=5432;Database=${POSTGRES_DB:-sentra};Username=${POSTGRES_USER:-sentra};Password=${POSTGRES_PASSWORD:-sentra};SSL Mode=Disable
+      ports:
+        - "${API_PORT:-5000}:5000"
+      volumes:
+        - .:/workspace
+        - sentra-dotnet-packages:/root/.nuget/packages
+      depends_on:
+        postgres:
+          condition: service_healthy
 
-  dashboard:
-    build:
-      context: .
-      dockerfile: apps/web-dashboard/Dockerfile
-    command: sh -c "test -d node_modules/@angular || npm ci && npm start -- --host 0.0.0.0 --port 4200"
-    ports:
-      - "${DASHBOARD_PORT:-4200}:4200"
-    volumes:
-      - ./apps/web-dashboard:/workspace/apps/web-dashboard
-      - sentra-dashboard-node-modules:/workspace/apps/web-dashboard/node_modules
-    depends_on:
-      - api
+    dashboard:
+      build:
+        context: .
+        dockerfile: apps/web-dashboard/Dockerfile
+      command: sh -c "test -d node_modules/@angular || npm ci && npm start -- --host 0.0.0.0 --port 4200"
+      ports:
+        - "${DASHBOARD_PORT:-4200}:4200"
+      volumes:
+        - ./apps/web-dashboard:/workspace/apps/web-dashboard
+        - sentra-dashboard-node-modules:/workspace/apps/web-dashboard/node_modules
+      depends_on:
+        - api
 
-  bot:
-    profiles:
-      - bot
-    build:
-      context: .
-      dockerfile: Dockerfile.bot
-    env_file:
-      - .env
-    environment:
-      DATABASE_URL: postgresql://${POSTGRES_USER:-sentra}:${POSTGRES_PASSWORD:-sentra}@postgres:5432/${POSTGRES_DB:-sentra}
-      CONNECTION_STRINGS: Host=postgres;Port=5432;Database=${POSTGRES_DB:-sentra};Username=${POSTGRES_USER:-sentra};Password=${POSTGRES_PASSWORD:-sentra};SSL Mode=Disable
-      API_URL: ${API_URL:-http://localhost:5000}
-      FRONTEND_URL: ${FRONTEND_URL:-http://localhost:4200}
-      PUID: ${PUID:-1000}
-      PGID: ${PGID:-1000}
-    volumes:
-      - ./Bot:/app/Bot
-      - ./data:/app/data
-      - ./logs:/app/logs
-      - sentra-huggingface-cache:/home/sentra/.cache/huggingface
-    depends_on:
-      postgres:
-        condition: service_healthy
+    bot:
+      profiles:
+        - bot
+      build:
+        context: .
+        dockerfile: Dockerfile.bot
+      env_file:
+        - .env
+      environment:
+        DATABASE_URL: postgresql://${POSTGRES_USER:-sentra}:${POSTGRES_PASSWORD:-sentra}@postgres:5432/${POSTGRES_DB:-sentra}
+        CONNECTION_STRINGS: Host=postgres;Port=5432;Database=${POSTGRES_DB:-sentra};Username=${POSTGRES_USER:-sentra};Password=${POSTGRES_PASSWORD:-sentra};SSL Mode=Disable
+        API_URL: ${API_URL:-http://localhost:5000}
+        FRONTEND_URL: ${FRONTEND_URL:-http://localhost:4200}
+        PUID: ${PUID:-1000}
+        PGID: ${PGID:-1000}
+      volumes:
+        - ./Bot:/app/Bot
+        - ./data:/app/data
+        - ./logs:/app/logs
+        - sentra-huggingface-cache:/home/sentra/.cache/huggingface
+      depends_on:
+        postgres:
+          condition: service_healthy
 
-volumes:
-  sentra-postgres-data:
-  sentra-dotnet-packages:
-  sentra-dashboard-node-modules:
-  sentra-huggingface-cache:
+  volumes:
+    sentra-postgres-data:
+    sentra-dotnet-packages:
+    sentra-dashboard-node-modules:
+    sentra-huggingface-cache:

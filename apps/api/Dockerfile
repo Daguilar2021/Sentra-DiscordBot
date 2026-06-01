@@ -1,11 +1,11 @@
 FROM mcr.microsoft.com/dotnet/sdk:10.0
 
-WORKDIR /workspace/apps/api
+WORKDIR /app
 
-COPY apps/api/Api.csproj ./
+COPY Api.csproj ./
 RUN dotnet restore
 
-COPY apps/api/. ./
+COPY . ./
 
 ENV ASPNETCORE_ENVIRONMENT=Development \
     ASPNETCORE_URLS=http://0.0.0.0:5000
