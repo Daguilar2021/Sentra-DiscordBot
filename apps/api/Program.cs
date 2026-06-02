@@ -9,14 +9,14 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddHttpClient();
 
+frontendUrl = builder.Configuration["FRONTEND_URL"] 
+?? throw new InvalidOperationException("FRONTEND_URL is not configured");
+
 builder.Services.AddCors(options =>
 {
     options.AddDefaultPolicy(policy =>
     {
-        policy.WithOrigins(
-            "http://localhost:4200",
-            "https://sentradev.vercel.app"
-             )
+        policy.WithOrigins(frontendUrl)
               .AllowAnyHeader()
               .AllowAnyMethod();
     });
