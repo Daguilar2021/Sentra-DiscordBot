@@ -9,8 +9,8 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddHttpClient();
 
-frontendUrl = builder.Configuration["FRONTEND_URL"] 
-?? throw new InvalidOperationException("FRONTEND_URL is not configured");
+var frontendUrl = builder.Configuration["FRONTEND_URL"]
+    ?? throw new InvalidOperationException("FRONTEND_URL is not configured");
 
 builder.Services.AddCors(options =>
 {
