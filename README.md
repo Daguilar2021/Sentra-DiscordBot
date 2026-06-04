@@ -2,6 +2,8 @@
 
 Sentra is a Discord bot designed to improve organization and reduce friction between participants, mentors, and organizers at large-scale events such as hackathons.
 
+https://sentradev.vercel.app/
+
 ## Overview
 
 Sentra consists of four main components:
