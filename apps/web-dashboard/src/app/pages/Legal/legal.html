@@ -1,0 +1,200 @@
+<div class="legal-page">
+  <div class="legal-container">
+    <header class="legal-header">
+      <p class="eyebrow">Sentra Legal</p>
+      <h1>Privacy Policy and API Data Use</h1>
+      <p>
+        This page explains how Sentra handles Discord API data, bot data, and
+        user requests. It is written to support Discord Developer Terms of
+        Service requirements for privacy, API data sharing, retention, and
+        deletion.
+      </p>
+      <p class="updated">Last updated: June 16, 2026</p>
+    </header>
+
+    <nav class="section toc-section" aria-label="Legal sections">
+      <h2 class="section-title">Contents</h2>
+      <ul class="toc-list">
+        <li><a (click)="scrollTo('overview', $event)" [class.active]="activeSection === 'overview'">Overview</a></li>
+        <li><a (click)="scrollTo('data-collected', $event)" [class.active]="activeSection === 'data-collected'">Data We Collect</a></li>
+        <li><a (click)="scrollTo('data-use', $event)" [class.active]="activeSection === 'data-use'">How We Use Data</a></li>
+        <li><a (click)="scrollTo('sharing', $event)" [class.active]="activeSection === 'sharing'">Sharing API Data</a></li>
+        <li><a (click)="scrollTo('retention', $event)" [class.active]="activeSection === 'retention'">Retention and Deletion</a></li>
+        <li><a (click)="scrollTo('user-rights', $event)" [class.active]="activeSection === 'user-rights'">User Rights</a></li>
+        <li><a (click)="scrollTo('self-hosting', $event)" [class.active]="activeSection === 'self-hosting'">Open Source Deployments</a></li>
+        <li><a (click)="scrollTo('contact', $event)" [class.active]="activeSection === 'contact'">Contact</a></li>
+      </ul>
+    </nav>
+
+    <main>
+      <section id="overview" class="section">
+        <h2 class="section-title">Overview</h2>
+        <div class="legal-card">
+          <p>
+            Sentra is an open-source Discord bot and web dashboard for event
+            organization, support ticketing, team formation, verification, and
+            server moderation. Sentra only uses Discord API data for the
+            functionality requested by a server administrator or user.
+          </p>
+          <p>
+            Sentra's privacy practices do not replace or modify Discord's terms.
+            If this policy conflicts with Discord's Developer Terms of Service,
+            Discord's terms control.
+          </p>
+        </div>
+      </section>
+
+      <section id="data-collected" class="section">
+        <h2 class="section-title">Data We Collect</h2>
+        <div class="legal-grid">
+          <article class="legal-card">
+            <h3>Server configuration</h3>
+            <p>
+              Guild IDs, role IDs, channel IDs, category IDs, ticket settings,
+              team settings, moderation log settings, and moderation thresholds.
+            </p>
+          </article>
+
+          <article class="legal-card">
+            <h3>User and verification data</h3>
+            <p>
+              Discord user IDs, guild IDs, optional Discord account email from
+              OAuth verification, verification status, event role, team
+              membership, and optional resume data if a deployment enables it.
+            </p>
+          </article>
+
+          <article class="legal-card">
+            <h3>Ticket and team data</h3>
+            <p>
+              Ticket channel IDs, ticket owner IDs, ticket status, staff claim
+              IDs, staff message IDs, team names, team channel IDs, team creator
+              IDs, member IDs, and lobby message IDs.
+            </p>
+          </article>
+
+          <article class="legal-card">
+            <h3>Moderation data</h3>
+            <p>
+              When auto-moderation is enabled, Sentra may process message
+              content, toxicity scores, detected keywords, actions taken, user
+              IDs, guild IDs, and timestamps for moderation logs and infraction
+              history.
+            </p>
+          </article>
+        </div>
+      </section>
+
+      <section id="data-use" class="section">
+        <h2 class="section-title">How We Use Data</h2>
+        <div class="legal-card">
+          <ul>
+            <li>Configure Sentra features for a Discord server.</li>
+            <li>Create, manage, claim, close, and delete support tickets.</li>
+            <li>Create and manage event teams, team channels, and team membership.</li>
+            <li>Verify Discord users through OAuth when a server uses verification.</li>
+            <li>Detect, log, and act on harmful messages when moderation is enabled.</li>
+            <li>Maintain operational logs needed to run, debug, and secure the application.</li>
+          </ul>
+          <p>
+            Sentra does not sell Discord API data. Sentra does not use Discord
+            API data for advertising or unrelated profiling.
+          </p>
+        </div>
+      </section>
+
+      <section id="sharing" class="section">
+        <h2 class="section-title">Sharing API Data</h2>
+        <div class="legal-card">
+          <p>
+            Sentra does not share Discord API data with third parties except
+            when necessary to operate the application, when required by law, or
+            when a user expressly directs the operator of a Sentra deployment to
+            share that user's data.
+          </p>
+          <p>
+            Service providers may include hosting providers, databases,
+            container infrastructure, logging systems, and similar processors
+            used by the operator of a specific Sentra deployment. Those
+            providers may only process data as needed to provide their services.
+          </p>
+        </div>
+      </section>
+
+      <section id="retention" class="section">
+        <h2 class="section-title">Retention and Deletion</h2>
+        <div class="legal-card">
+          <p>
+            Sentra retains Discord API data only while it is needed for the
+            feature that collected it, unless a longer period is required by
+            applicable law or a server operator's lawful obligations.
+          </p>
+          <ul>
+            <li>Ticket records should be deleted or anonymized after the ticket is closed and no longer needed.</li>
+            <li>Team data should be deleted when a team is disbanded or no longer needed.</li>
+            <li>Moderation infractions should be retained only while needed for server safety and review.</li>
+            <li>Server configuration should be deleted when Sentra is removed from a server or the server requests deletion.</li>
+            <li>OAuth verification data should be updated or deleted when it is no longer required for verification.</li>
+          </ul>
+          <p>
+            If Sentra receives Discord API data in error, the operator should
+            delete it promptly and provide proof of deletion if Discord requests
+            it.
+          </p>
+        </div>
+      </section>
+
+      <section id="user-rights" class="section">
+        <h2 class="section-title">User Rights and Requests</h2>
+        <div class="legal-card">
+          <p>
+            Users may request access, correction, modification, or deletion of
+            their Sentra data. Requests should identify the Discord account and
+            server involved so the relevant deployment operator can locate the
+            data.
+          </p>
+          <p>
+            Sentra operators should respond to deletion or correction requests
+            promptly and in accordance with applicable privacy laws, including
+            GDPR, UK GDPR, LGPD, CCPA, CPRA, and similar laws where they apply.
+          </p>
+        </div>
+      </section>
+
+      <section id="self-hosting" class="section">
+        <h2 class="section-title">Open Source Deployments</h2>
+        <div class="legal-card">
+          <p>
+            Sentra's source code is publicly available so multiple developers
+            and communities can run their own local or hosted bot deployments.
+            Each self-hosted deployment is controlled by the person or
+            organization that runs it.
+          </p>
+          <p>
+            If you operate your own Sentra bot, you are responsible for your
+            deployment's Discord Developer Portal settings, privacy policy,
+            service providers, database security, data retention, user request
+            process, and compliance with Discord's terms and applicable privacy
+            laws.
+          </p>
+        </div>
+      </section>
+
+      <section id="contact" class="section">
+        <h2 class="section-title">Contact</h2>
+        <div class="legal-card">
+          <p>
+            For privacy, deletion, or data correction requests, contact the
+            operator of the Sentra deployment used in your Discord server. If
+            you are using the official Sentra deployment, contact the project
+            maintainer through the public repository.
+          </p>
+        </div>
+      </section>
+    </main>
+
+    <footer class="footer">
+      <p>Sentra Privacy Policy and API Data Use</p>
+    </footer>
+  </div>
+</div>
